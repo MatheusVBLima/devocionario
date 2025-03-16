@@ -17,6 +17,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { santos, santo } from "@/data/santos";
 import { SantoImage } from "@/components/SantoImage";
 
@@ -137,8 +144,8 @@ export default function SantosPage() {
         Conheça os santos e santas celebrados ao longo do ano litúrgico.
       </p>
       
-      {/* Barra de pesquisa */}
-      <div className="flex justify-center mb-8">
+      {/* Barra de pesquisa e filtro de mês */}
+      <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-8">
         <div className="relative w-full max-w-lg">
           <Input
             type="text"
@@ -148,20 +155,19 @@ export default function SantosPage() {
             className="w-full"
           />
         </div>
-      </div>
-      
-      {/* Filtros de mês */}
-      <div className="flex flex-wrap justify-center gap-2 mb-10">
-        {meses.map(mes => (
-          <Button
-            key={mes.valor}
-            variant={selectedMes === mes.valor ? "default" : "outline"}
-            className="mb-2"
-            onClick={() => setSelectedMes(mes.valor)}
-          >
-            {mes.nome}
-          </Button>
-        ))}
+        
+        <div className="w-full md:w-auto min-w-[200px]">
+          <Select value={selectedMes} onValueChange={setSelectedMes}>
+            <SelectTrigger>
+              <SelectValue placeholder="Mês" />
+            </SelectTrigger>
+            <SelectContent>
+              {meses.map(mes => (
+                <SelectItem key={mes.valor} value={mes.valor}>{mes.nome}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       {/* Skeleton Loading */}

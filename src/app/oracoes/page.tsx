@@ -18,6 +18,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OracoesPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -124,8 +131,8 @@ export default function OracoesPage() {
         devoções aos santos, e práticas espirituais para fortalecer sua fé.
       </p>
       
-      {/* Barra de pesquisa */}
-      <div className="flex justify-center mb-8">
+      {/* Barra de pesquisa e filtro de categoria */}
+      <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-8">
         <div className="relative w-full max-w-md">
           <Input
             type="text"
@@ -135,20 +142,19 @@ export default function OracoesPage() {
             className="w-full"
           />
         </div>
-      </div>
-      
-      {/* Filtros de categoria */}
-      <div className="flex flex-wrap justify-center gap-2 mb-10">
-        {categorias.map(categoria => (
-          <Button
-            key={categoria}
-            variant={selectedCategory === categoria ? "default" : "outline"}
-            onClick={() => setSelectedCategory(categoria)}
-            className="mb-2"
-          >
-            {categoria}
-          </Button>
-        ))}
+        
+        <div className="w-full md:w-auto min-w-[200px]">
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              {categorias.map(categoria => (
+                <SelectItem key={categoria} value={categoria}>{categoria}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       {/* Skeleton Loading */}
