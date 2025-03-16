@@ -57,7 +57,7 @@ const noticiasData = [
   }
 ];
 
-export default async function NoticiaPage({ params }: { params: { id: string } }) {
+export default async function NoticiaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const noticiaId = parseInt(id);
   const noticia = noticiasData.find(n => n.id === noticiaId);
