@@ -220,7 +220,7 @@ Oremos: Infundi, Senhor, nós vos pedimos, a vossa graça em nossas almas, para 
   }
 ];
 
-export default async function OracaoPage({ params }: { params: { id: string } }) {
+export default async function OracaoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const oracaoId = parseInt(id);
   const oracao = oracoesData.find(o => o.id === oracaoId);

@@ -162,8 +162,9 @@ const misteriosData = {
   }
 };
 
-export default function MisterioPage({ params }: { params: { id: string } }) {
-  const misterio = misteriosData[params.id as keyof typeof misteriosData];
+export default async function MisterioPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const misterio = misteriosData[id as keyof typeof misteriosData];
   
   if (!misterio) {
     notFound();
