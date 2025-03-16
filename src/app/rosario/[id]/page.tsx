@@ -6,8 +6,7 @@ const misteriosData = {
   'gloriosos': {
     nome: 'Mistérios Gloriosos',
     descricao: 'Celebram a vitória de Jesus sobre a morte e a glorificação de Nossa Senhora.',
-    cor: 'bg-primary',
-    corTexto: 'text-primary',
+
     dias: 'Quartas e Domingos',
     misteriosDetalhados: [
       {
@@ -45,8 +44,7 @@ const misteriosData = {
   'dolorosos': {
     nome: 'Mistérios Dolorosos',
     descricao: 'Meditam os sofrimentos de Jesus durante sua Paixão.',
-    cor: 'bg-destructive',
-    corTexto: 'text-destructive',
+
     dias: 'Terças e Sextas',
     misteriosDetalhados: [
       {
@@ -85,8 +83,7 @@ const misteriosData = {
   'gozosos': {
     nome: 'Mistérios Gozosos',
     descricao: 'Contemplam a alegria da encarnação e infância de Jesus.',
-    cor: 'bg-accent',
-    corTexto: 'text-accent',
+
     dias: 'Segundos e Sábados',
     misteriosDetalhados: [
       {
@@ -124,8 +121,7 @@ const misteriosData = {
   'luminosos': {
     nome: 'Mistérios Luminosos',
     descricao: 'Contemplam a vida pública de Jesus e seu ministério.',
-    cor: 'bg-secondary',
-    corTexto: 'text-secondary',
+
     dias: 'Quintas',
     misteriosDetalhados: [
       {
@@ -178,7 +174,7 @@ export default async function MisterioPage({ params }: { params: Promise<{ id: s
   return (
     <div className="container mx-auto px-8 py-20 lg:py-32">
       <BreadcrumbNav items={breadcrumbItems} />
-      <h1 className={`text-4xl font-bold mb-4 ${misterio.corTexto}`}>{misterio.nome}</h1>
+      <h1 className={`text-4xl font-bold mb-4`}>{misterio.nome}</h1>
       <p className="text-lg text-foreground mb-8">{misterio.descricao}</p>
       <p className="text-sm text-muted-foreground mb-12">Dias recomendados: {misterio.dias}</p>
       
