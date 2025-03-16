@@ -61,6 +61,10 @@ export const NAV_LINKS = [
     link: "/rotina",
   },
   {
+    name: "Santos",
+    link: "/santos",
+  },
+  {
     name: "Blog",
     link: "/blog",
   },
@@ -105,7 +109,7 @@ export default function Header() {
       {/* Desktop */}
       <motion.div
         animate={{
-          width: visible ? "60%" : "100%",
+          width: visible ? "70%" : "100%",
           y: visible ? 20 : 0,
         }}
         transition={{

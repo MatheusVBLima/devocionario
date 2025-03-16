@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Oracao, oracoes } from "@/data/oracoes";
 import {
   Pagination,
   PaginationContent,
@@ -18,97 +17,112 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { santos, santo } from "@/data/santos";
+import { SantoImage } from "@/components/SantoImage";
 
-export default function OracoesPage() {
+export default function SantosPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Todas');
-  const [filteredOracoes, setFilteredOracoes] = useState<Oracao[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [selectedMes, setSelectedMes] = useState('Todos');
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredSantos, setFilteredSantos] = useState<santo[]>([]);
+  const [loading, setLoading] = useState(true);
   const itemsPerPage = 9;
+  
+  // Array de meses para o filtro
+  const meses = [
+    { valor: 'Todos', nome: 'Todos os meses' },
+    { valor: '01', nome: 'Janeiro' },
+    { valor: '02', nome: 'Fevereiro' },
+    { valor: '03', nome: 'Março' },
+    { valor: '04', nome: 'Abril' },
+    { valor: '05', nome: 'Maio' },
+    { valor: '06', nome: 'Junho' },
+    { valor: '07', nome: 'Julho' },
+    { valor: '08', nome: 'Agosto' },
+    { valor: '09', nome: 'Setembro' },
+    { valor: '10', nome: 'Outubro' },
+    { valor: '11', nome: 'Novembro' },
+    { valor: '12', nome: 'Dezembro' }
+  ];
 
-  // Extrair categorias únicas das orações reais
-  const [categorias, setCategorias] = useState<string[]>(['Todas']);
-
-  // Inicializar dados quando o componente é montado
+  // Filtrar santos com base na pesquisa e no mês selecionado
   useEffect(() => {
-    // Ordenar por ordem (order) e depois por título
-    const sortedOracoes = [...oracoes].sort((a, b) => {
-      if (a.order !== b.order) {
-        return a.order - b.order;
-      }
-      return a.title.localeCompare(b.title);
-    });
-    
-    // Extrair categorias únicas
-    const uniqueCategories = ['Todas', ...new Set(oracoes.map(oracao => oracao.category))];
-    setCategorias(uniqueCategories);
-    
-    setFilteredOracoes(sortedOracoes);
-    setLoading(false);
-  }, []);
-
-  // Filtrar orações com base na pesquisa e categoria
-  useEffect(() => {
-    let filtered = [...oracoes];
+    let filtered = [...santos];
     
     // Filtrar por termo de pesquisa
     if (searchTerm) {
-      filtered = filtered.filter(oracao => 
-        oracao.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        oracao.content.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(santo => 
+        santo.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        santo.sobre.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
-    // Filtrar por categoria
-    if (selectedCategory !== 'Todas') {
-      filtered = filtered.filter(oracao => oracao.category === selectedCategory);
+    // Filtrar por mês
+    if (selectedMes !== 'Todos') {
+      filtered = filtered.filter(santo => santo.mes === selectedMes);
     }
     
-    // Ordenar por ordem (order) e depois por título
+    // Ordenar por mês e dia
     filtered.sort((a, b) => {
-      if (a.order !== b.order) {
-        return a.order - b.order;
+      if (a.mes !== b.mes) {
+        return parseInt(a.mes) - parseInt(b.mes);
       }
-      return a.title.localeCompare(b.title);
+      return parseInt(a.dia) - parseInt(b.dia);
     });
     
-    setFilteredOracoes(filtered);
+    setFilteredSantos(filtered);
     setCurrentPage(1); // Resetar para a primeira página quando filtros mudam
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedMes]);
+
+  // Inicializar filteredSantos com todos os santos quando o componente é montado
+  useEffect(() => {
+    // Ordenar por mês e dia
+    const sortedSantos = [...santos].sort((a, b) => {
+      if (a.mes !== b.mes) {
+        return parseInt(a.mes) - parseInt(b.mes);
+      }
+      return parseInt(a.dia) - parseInt(b.dia);
+    });
+    
+    setFilteredSantos(sortedSantos);
+    setLoading(false); // Marcar como carregado após inicializar os dados
+  }, []);
 
   // Calcular número total de páginas
-  const totalPages = Math.ceil(filteredOracoes.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredSantos.length / itemsPerPage);
   
-  // Obter orações para a página atual
+  // Obter santos para a página atual
   const getCurrentPageItems = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return filteredOracoes.slice(startIndex, endIndex);
+    return filteredSantos.slice(startIndex, endIndex);
   };
 
-  // Formatar a duração estimada baseada no tamanho do conteúdo
-  const estimarTempo = (content: string) => {
-    const palavras = content.split(/\s+/).length;
-    const minutos = Math.max(1, Math.ceil(palavras / 150)); // ~150 palavras por minuto
-    return `${minutos} min`;
+  // Formatação do nome do mês por extenso
+  const formatarData = (dia: string, mes: string) => {
+    const meses = [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+    const mesIndex = parseInt(mes) - 1;
+    return `${parseInt(dia)} de ${meses[mesIndex]}`;
   };
 
   // Componente de skeleton para os cards
   const SkeletonCard = () => (
     <Card className="flex flex-col h-full">
       <CardHeader>
-        <Skeleton className="h-6 w-[70%] mb-1" />
-        <Skeleton className="h-4 w-[90%]" />
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <Skeleton className="h-40 w-full mb-4" />
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-[80%] mb-2" />
-        <div className="flex gap-2 mt-4">
-          <Skeleton className="h-5 w-20" />
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <Skeleton className="h-5 w-24" />
           <Skeleton className="h-5 w-16" />
         </div>
+        <Skeleton className="h-6 w-[80%] mb-1" />
+      </CardHeader>
+      <CardContent className="flex-grow">
+        <Skeleton className="h-48 w-full mb-4" />
+        <Skeleton className="h-4 w-full mb-2" />
+        <Skeleton className="h-4 w-[80%] mb-2" />
+        <Skeleton className="h-4 w-[60%]" />
       </CardContent>
       <CardFooter className="mt-auto pt-2">
         <Skeleton className="h-10 w-full" />
@@ -118,18 +132,17 @@ export default function OracoesPage() {
 
   return (
     <div className="container mx-auto px-8 py-20 lg:py-32">
-      <h1 className="text-4xl font-bold text-center mb-4 text-primary">Orações</h1>
+      <h1 className="text-4xl font-bold text-center mb-4 text-primary">Calendário dos Santos</h1>
       <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-        Uma coleção de orações católicas para todos os momentos. Encontre orações tradicionais, 
-        devoções aos santos, e práticas espirituais para fortalecer sua fé.
+        Conheça os santos e santas celebrados ao longo do ano litúrgico.
       </p>
       
       {/* Barra de pesquisa */}
       <div className="flex justify-center mb-8">
-        <div className="relative w-full max-w-md">
+        <div className="relative w-full max-w-lg">
           <Input
             type="text"
-            placeholder="Pesquisar orações..."
+            placeholder="Pesquisar santos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
@@ -137,16 +150,16 @@ export default function OracoesPage() {
         </div>
       </div>
       
-      {/* Filtros de categoria */}
+      {/* Filtros de mês */}
       <div className="flex flex-wrap justify-center gap-2 mb-10">
-        {categorias.map(categoria => (
+        {meses.map(mes => (
           <Button
-            key={categoria}
-            variant={selectedCategory === categoria ? "default" : "outline"}
-            onClick={() => setSelectedCategory(categoria)}
+            key={mes.valor}
+            variant={selectedMes === mes.valor ? "default" : "outline"}
             className="mb-2"
+            onClick={() => setSelectedMes(mes.valor)}
           >
-            {categoria}
+            {mes.nome}
           </Button>
         ))}
       </div>
@@ -160,39 +173,43 @@ export default function OracoesPage() {
         </div>
       ) : (
         <>
-          {/* Grid de orações */}
+          {/* Grid de santos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {getCurrentPageItems().map(oracao => (
-              <Card key={oracao.id} className="flex flex-col h-full">
+            {getCurrentPageItems().map(santo => (
+              <Card key={santo.id} className="flex flex-col h-full">
                 <CardHeader>
-                  <CardTitle className="line-clamp-2">{oracao.title}</CardTitle>
-                  <div className="flex gap-2 mt-2">
-                    <Badge variant="outline">{oracao.category}</Badge>
-                    <Badge variant="secondary">{estimarTempo(oracao.content)}</Badge>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <Badge variant="outline">
+                      {formatarData(santo.dia, santo.mes)}
+                    </Badge>
+                    
                   </div>
+                  <CardTitle className="line-clamp-2">{santo.nome}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  {oracao.imageUrl && (
-                    <div className="relative h-40 w-full mb-4">
-                      <Image
-                        src={oracao.imageUrl}
-                        alt={oracao.title}
-                        fill
+                  <div className="relative h-48 w-full mb-4">
+                    {santo.imagem ? (
+                      <SantoImage
+                        src={santo.imagem}
+                        alt={santo.nome}
                         className="object-cover rounded-lg"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = "/placeholder.svg?height=160&width=320";
-                        }}
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <Image
+                        src="/placeholder.svg?height=192&width=384"
+                        alt={santo.nome}
+                        fill
+                        className="object-cover rounded-lg bg-muted"
+                      />
+                    )}
+                  </div>
                   <p className="line-clamp-3 text-muted-foreground">
-                    {oracao.content.replace(/\n/g, ' ').replace(/\*\*/g, '')}
+                    {santo.sobre}
                   </p>
                 </CardContent>
                 <CardFooter className="mt-auto pt-2">
-                  <Button asChild className="w-full">
-                    <Link href={`/oracoes/${oracao.id}`}>Ver Oração</Link>
+                  <Button variant="secondary" className="w-full" asChild>
+                    <Link href={`/santos/${santo.id}`}>Ver detalhes</Link>
                   </Button>
                 </CardFooter>
               </Card>
@@ -200,15 +217,15 @@ export default function OracoesPage() {
           </div>
           
           {/* Mensagem quando não há resultados */}
-          {filteredOracoes.length === 0 && (
-            <div className="col-span-full text-center py-10">
-              <p className="text-lg text-muted-foreground">Nenhuma oração encontrada para sua busca.</p>
+          {filteredSantos.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-lg text-muted-foreground">Nenhum santo encontrado com os filtros selecionados.</p>
               <Button 
                 variant="outline" 
                 className="mt-4"
                 onClick={() => {
                   setSearchTerm('');
-                  setSelectedCategory('Todas');
+                  setSelectedMes('Todos');
                 }}
               >
                 Limpar filtros
@@ -217,7 +234,7 @@ export default function OracoesPage() {
           )}
           
           {/* Paginação */}
-          {filteredOracoes.length > 0 && totalPages > 1 && (
+          {filteredSantos.length > 0 && (
             <div className="mt-12">
               <Pagination>
                 <PaginationContent>
