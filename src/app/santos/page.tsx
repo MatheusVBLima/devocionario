@@ -35,7 +35,6 @@ export default function SantosPage() {
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 9;
   
-  // Array de meses para o filtro
   const meses = [
     { valor: 'Todos', nome: 'Todos os meses' },
     { valor: '01', nome: 'Janeiro' },
@@ -52,11 +51,9 @@ export default function SantosPage() {
     { valor: '12', nome: 'Dezembro' }
   ];
 
-  // Filtrar santos com base na pesquisa e no mês selecionado
   useEffect(() => {
     let filtered = [...santos];
     
-    // Filtrar por termo de pesquisa
     if (searchTerm) {
       filtered = filtered.filter(santo => 
         santo.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -64,12 +61,10 @@ export default function SantosPage() {
       );
     }
     
-    // Filtrar por mês
     if (selectedMes !== 'Todos') {
       filtered = filtered.filter(santo => santo.mes === selectedMes);
     }
     
-    // Ordenar por mês e dia
     filtered.sort((a, b) => {
       if (a.mes !== b.mes) {
         return parseInt(a.mes) - parseInt(b.mes);
@@ -78,12 +73,10 @@ export default function SantosPage() {
     });
     
     setFilteredSantos(filtered);
-    setCurrentPage(1); // Resetar para a primeira página quando filtros mudam
+    setCurrentPage(1);
   }, [searchTerm, selectedMes]);
 
-  // Inicializar filteredSantos com todos os santos quando o componente é montado
   useEffect(() => {
-    // Ordenar por mês e dia
     const sortedSantos = [...santos].sort((a, b) => {
       if (a.mes !== b.mes) {
         return parseInt(a.mes) - parseInt(b.mes);
@@ -92,20 +85,17 @@ export default function SantosPage() {
     });
     
     setFilteredSantos(sortedSantos);
-    setLoading(false); // Marcar como carregado após inicializar os dados
+    setLoading(false);
   }, []);
 
-  // Calcular número total de páginas
   const totalPages = Math.ceil(filteredSantos.length / itemsPerPage);
   
-  // Obter santos para a página atual
   const getCurrentPageItems = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return filteredSantos.slice(startIndex, endIndex);
   };
 
-  // Formatação do nome do mês por extenso
   const formatarData = (dia: string, mes: string) => {
     const meses = [
       'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
@@ -115,7 +105,6 @@ export default function SantosPage() {
     return `${parseInt(dia)} de ${meses[mesIndex]}`;
   };
 
-  // Componente de skeleton para os cards
   const SkeletonCard = () => (
     <Card className="flex flex-col h-full">
       <CardHeader>
@@ -144,7 +133,6 @@ export default function SantosPage() {
         Conheça os santos e santas celebrados ao longo do ano litúrgico.
       </p>
       
-      {/* Barra de pesquisa e filtro de mês */}
       <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-8">
         <div className="relative w-full max-w-lg">
           <Input
@@ -170,7 +158,6 @@ export default function SantosPage() {
         </div>
       </div>
       
-      {/* Skeleton Loading */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 9 }).map((_, index) => (
@@ -179,7 +166,6 @@ export default function SantosPage() {
         </div>
       ) : (
         <>
-          {/* Grid de santos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {getCurrentPageItems().map(santo => (
               <Card key={santo.id} className="flex flex-col h-full">
@@ -222,7 +208,6 @@ export default function SantosPage() {
             ))}
           </div>
           
-          {/* Mensagem quando não há resultados */}
           {filteredSantos.length === 0 && (
             <div className="text-center py-12">
               <p className="text-lg text-muted-foreground">Nenhum santo encontrado com os filtros selecionados.</p>
@@ -239,7 +224,6 @@ export default function SantosPage() {
             </div>
           )}
           
-          {/* Paginação */}
           {filteredSantos.length > 0 && (
             <div className="mt-12">
               <Pagination>
@@ -251,11 +235,9 @@ export default function SantosPage() {
                     />
                   </PaginationItem>
                   
-                  {/* Renderizar links de páginas */}
                   {Array.from({ length: totalPages }).map((_, index) => {
                     const pageNumber = index + 1;
                     
-                    // Mostrar apenas páginas próximas da atual para não sobrecarregar a UI
                     if (
                       pageNumber === 1 || 
                       pageNumber === totalPages || 

@@ -19,23 +19,10 @@ function ReviewCard({ name, text, stars = 5 }: { name: string; text: string; sta
 }
 
 export default function Home() {
-  // Dados para as duas fileiras de avaliações
-  const firstRow = [
-    { name: "Maria Silva", text: "Este site tem sido uma benção para minha vida espiritual. Recomendo a todos!" },
-    { name: "João Oliveira", text: "Uso o Devocionário todos os dias para acompanhar a liturgia. Excelente ferramenta!" },
-    { name: "Ana Costa", text: "As orações disponíveis me ajudaram muito nos momentos difíceis. Muito obrigada!" },
-    { name: "Carlos Santos", text: "O guia do rosário é muito completo e didático. Ajudou minha família inteira." },
-  ];
-
-  const secondRow = [
-    { name: "Pedro Almeida", text: "O conteúdo sobre os santos me inspira diariamente. Parabéns pela iniciativa!" },
-    { name: "Lúcia Ferreira", text: "Indico para todos os meus amigos do grupo de oração. Material de qualidade." },
-    { name: "Roberto Gomes", text: "A interface é muito intuitiva e o conteúdo é profundo e fiel ao catecismo." },
-    { name: "Fátima Mendes", text: "Graças ao Devocionário, consegui criar uma rotina de oração consistente." },
-  ];
+  
 
   return (
-    <div className="w-full relative flex flex-col overflow-x-hidden font-base antialiased">
+    <div className="w-full relative flex flex-col ">
       <section className="w-full"><HeroSection /></section>
       <Separator />
       <section className="w-full"><FeaturesSection /></section>

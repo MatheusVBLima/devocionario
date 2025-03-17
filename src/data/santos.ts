@@ -7,6 +7,7 @@ export type santo = {
     sobre: string;
     oracao: string;
     imagem: string;
+
 }
 
 export const santos: santo[] = [

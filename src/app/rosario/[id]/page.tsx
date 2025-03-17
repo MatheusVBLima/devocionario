@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { BreadcrumbNav } from '@/components/BreadcrumbNav';
 
-// Dados dos mistérios do Rosário
 const misteriosData = {
   'gloriosos': {
     nome: 'Mistérios Gloriosos',

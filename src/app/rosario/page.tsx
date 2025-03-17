@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/components/ui/button";
 
 export default function RosarioPage() {
-  // Dados dos mistérios do Rosário
   const misterios = [
     {
       id: 'gloriosos',

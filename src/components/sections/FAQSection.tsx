@@ -7,7 +7,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-// Interface para os dados das perguntas frequentes
 interface FAQItem {
   question: string;
   answer: string;
@@ -15,7 +14,7 @@ interface FAQItem {
 }
 
 export function FAQSection() {
-  // Dados das perguntas frequentes
+  
   const faqData: FAQItem[] = [
     {
       question: "Como posso rezar o Santo Rosário?",
@@ -40,8 +39,6 @@ export function FAQSection() {
         <AnimationContainer animation="fadeUp" delay={0.2}>
           <h2 className="text-3xl font-bold text-center mb-12">Perguntas Frequentes</h2>
         </AnimationContainer>
-        
-        <div className="max-w-3xl mx-auto">
           <AnimationContainer animation="fadeUp" delay={0.4}>
             <Accordion type="single" collapsible className="w-full">
               {faqData.map((item) => (
@@ -55,8 +52,7 @@ export function FAQSection() {
                 </AccordionItem>
               ))}
             </Accordion>
-          </AnimationContainer>
-        </div>
+          </AnimationContainer>  
       </Wrapper>
     
   );

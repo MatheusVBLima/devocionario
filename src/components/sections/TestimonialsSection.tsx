@@ -2,7 +2,6 @@ import { Wrapper } from "@/components/utils/Wrapper";
 import { AnimationContainer } from "@/components/utils/AnimationContainer";
 import { Marquee } from "@/components/magicui/marquee";
 
-// Componente ReviewCard para as avaliações
 function ReviewCard({ name, text, stars = 5 }: { name: string; text: string; stars?: number }) {
   return (
     <div className="mx-4 p-4 border rounded-lg min-w-80 group-hover:pause">
@@ -14,8 +13,6 @@ function ReviewCard({ name, text, stars = 5 }: { name: string; text: string; sta
     </div>
   );
 }
-
-// Interface para os dados dos depoimentos
 interface Testimonial {
   name: string;
   text: string;
@@ -23,7 +20,6 @@ interface Testimonial {
 }
 
 export function TestimonialsSection() {
-  // Dados para as duas fileiras de avaliações
   const firstRow: Testimonial[] = [
     { name: "Maria Silva", text: "Este site tem sido uma benção para minha vida espiritual. Recomendo a todos!" },
     { name: "João Oliveira", text: "Uso o Devocionário todos os dias para acompanhar a liturgia. Excelente ferramenta!" },

@@ -131,7 +131,6 @@ export default function OracoesPage() {
         devoções aos santos, e práticas espirituais para fortalecer sua fé.
       </p>
       
-      {/* Barra de pesquisa e filtro de categoria */}
       <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-8">
         <div className="relative w-full max-w-md">
           <Input
@@ -157,7 +156,6 @@ export default function OracoesPage() {
         </div>
       </div>
       
-      {/* Skeleton Loading */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 9 }).map((_, index) => (
@@ -166,7 +164,6 @@ export default function OracoesPage() {
         </div>
       ) : (
         <>
-          {/* Grid de orações */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {getCurrentPageItems().map(oracao => (
               <Card key={oracao.id} className="flex flex-col h-full">
@@ -205,7 +202,6 @@ export default function OracoesPage() {
             ))}
           </div>
           
-          {/* Mensagem quando não há resultados */}
           {filteredOracoes.length === 0 && (
             <div className="col-span-full text-center py-10">
               <p className="text-lg text-muted-foreground">Nenhuma oração encontrada para sua busca.</p>
@@ -222,7 +218,6 @@ export default function OracoesPage() {
             </div>
           )}
           
-          {/* Paginação */}
           {filteredOracoes.length > 0 && totalPages > 1 && (
             <div className="mt-12">
               <Pagination>
@@ -234,11 +229,9 @@ export default function OracoesPage() {
                     />
                   </PaginationItem>
                   
-                  {/* Renderizar links de páginas */}
                   {Array.from({ length: totalPages }).map((_, index) => {
                     const pageNumber = index + 1;
                     
-                    // Mostrar apenas páginas próximas da atual para não sobrecarregar a UI
                     if (
                       pageNumber === 1 || 
                       pageNumber === totalPages || 

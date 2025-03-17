@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Wrapper } from "@/components/utils/Wrapper";
 import { AnimationContainer } from "@/components/utils/AnimationContainer";
 
-// Interface para os dados das features
 interface FeatureItem {
   icon: string;
   title: string;
@@ -13,7 +12,7 @@ interface FeatureItem {
 }
 
 export function FeaturesSection() {
-  // Dados das features
+
   const featuresData: FeatureItem[] = [
     {
       icon: "✝️",

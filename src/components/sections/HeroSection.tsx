@@ -9,7 +9,6 @@ export function HeroSection() {
     <section className="w-full">
       <Wrapper className="pt-32 lg:pt-40 pb-10 min-h-screen w-full flex-1">
         <div className="flex flex-col items-center">
-          {/* Texto */}
           <div className="text-center mb-16">
             <AnimationContainer animation="fadeUp" delay={0.2}>
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
@@ -39,7 +38,6 @@ export function HeroSection() {
             </AnimationContainer>
           </div>
           
-          {/* Imagem */}
           <AnimationContainer animation="fadeUp" delay={0.8}>
             <div className="relative w-full max-w-4xl mx-auto rounded-lg overflow-hidden shadow-xl">
               <Image 

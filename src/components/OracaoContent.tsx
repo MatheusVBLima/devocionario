@@ -11,10 +11,9 @@ interface OracaoContentProps {
 }
 
 export function OracaoContent({ oracao }: OracaoContentProps) {
-  // Formatar a duração estimada baseada no tamanho do conteúdo
   const estimarTempo = (content: string) => {
     const palavras = content.split(/\s+/).length;
-    const minutos = Math.max(1, Math.ceil(palavras / 150)); // ~150 palavras por minuto
+    const minutos = Math.max(1, Math.ceil(palavras / 150));
     return `${minutos} min de leitura`;
   };
 

@@ -14,23 +14,20 @@ export default function RotinaPage() {
   const [santoDoDia, setSantoDoDia] = useState<santo | null>(null);
   const [loading, setLoading] = useState(true);
   
-  // Buscar o santo do dia atual
   useEffect(() => {
     const dataAtual = new Date();
     const dia = String(dataAtual.getDate()).padStart(2, '0');
-    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); // +1 porque janeiro é 0
+    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
     
     const santoHoje = santos.find(s => s.dia === dia && s.mes === mes);
     if (santoHoje) {
       setSantoDoDia(santoHoje);
     } else {
-      // Fallback para o primeiro santo se não encontrar
       setSantoDoDia(santos[0]);
     }
     setLoading(false);
   }, []);
 
-  // Dicas para rotina católica
   const dicas = [
     {
       titulo: 'Oração pela Manhã',
@@ -70,7 +67,6 @@ export default function RotinaPage() {
     }
   ];
 
-  // Formatação do nome do mês por extenso
   const formatarData = (dia: string, mes: string) => {
     const meses = [
       'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
@@ -95,7 +91,6 @@ export default function RotinaPage() {
         Sugestões para incorporar a fé no dia-a-dia e conhecer o santo celebrado hoje.
       </p>
       
-      {/* Santo do dia */}
       {santoDoDia && (
         <div className="mb-16">
           <h2 className="text-2xl font-bold mb-6 text-center">Santo do Dia</h2>
@@ -157,7 +152,6 @@ export default function RotinaPage() {
       
       <Separator className="my-12" />
       
-      {/* Dicas para rotina */}
       <div>
         <h2 className="text-2xl font-bold mb-6 text-center">Dicas para sua Rotina</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

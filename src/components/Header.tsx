@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Hook para detectar clique fora do elemento
+
 export const useClickOutside = (handler: () => void) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -77,7 +77,6 @@ export default function Header() {
   const { theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   
-  // Efeito para evitar problemas de hidratação
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -99,14 +98,12 @@ export default function Header() {
     }
   })
 
-  // Determinar qual logo usar baseado no tema
   const logoSrc = mounted && (theme === 'dark' || resolvedTheme === 'dark') 
     ? "/logo-white.svg" 
     : "/logo.svg";
 
   return (
-    <header className="container fixed w-full top-0 inset-x-0 z-50">
-      {/* Desktop */}
+    <header className="fixed w-full top-0 inset-x-0 z-50">
       <motion.div
         animate={{
           width: visible ? "70%" : "100%",
@@ -169,7 +166,6 @@ export default function Header() {
         </Wrapper>
       </motion.div>
 
-      {/* Mobile */}
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-b border-border py-3 px-4 z-50">
         <div className="flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">

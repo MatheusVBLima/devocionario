@@ -17,7 +17,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-// Interface para o tipo de notícia
 interface Noticia {
   id: number;
   titulo: string;
@@ -35,7 +34,6 @@ export default function BlogPage() {
   const [filteredNoticias, setFilteredNoticias] = useState<Noticia[]>([]);
   const itemsPerPage = 9;
   
-  // Dados das notícias (mock)
   const noticias: Noticia[] = [
     {
       id: 1,
@@ -147,14 +145,11 @@ export default function BlogPage() {
     }
   ];
 
-  // Extrair categorias únicas para o filtro
   const categorias = ['Todas', ...new Set(noticias.map(noticia => noticia.categoria))];
 
-  // Filtrar notícias com base na pesquisa e categoria
   useEffect(() => {
     let filtered = noticias;
     
-    // Filtrar por termo de pesquisa
     if (searchTerm) {
       filtered = filtered.filter(noticia => 
         noticia.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -163,24 +158,20 @@ export default function BlogPage() {
       );
     }
     
-    // Filtrar por categoria
     if (selectedCategory !== 'Todas') {
       filtered = filtered.filter(noticia => noticia.categoria === selectedCategory);
     }
     
     setFilteredNoticias(filtered);
-    setCurrentPage(1); // Resetar para a primeira página quando filtros mudam
+    setCurrentPage(1);
   }, [searchTerm, selectedCategory]);
 
-  // Inicializar filteredNoticias com todas as notícias quando o componente é montado
   useEffect(() => {
     setFilteredNoticias(noticias);
   }, []);
 
-  // Calcular número total de páginas
   const totalPages = Math.ceil(filteredNoticias.length / itemsPerPage);
   
-  // Obter notícias para a página atual
   const getCurrentPageItems = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -194,7 +185,6 @@ export default function BlogPage() {
         Acompanhe as últimas notícias e reflexões sobre a Igreja Católica no Brasil e no mundo.
       </p>
       
-      {/* Barra de pesquisa */}
       <div className="flex justify-center mb-8">
         <div className="relative w-full max-w-lg">
           <Input
@@ -207,7 +197,6 @@ export default function BlogPage() {
         </div>
       </div>
       
-      {/* Filtros de categoria */}
       <div className="flex flex-wrap justify-center gap-2 mb-10">
         {categorias.map(categoria => (
           <Button
@@ -220,8 +209,7 @@ export default function BlogPage() {
           </Button>
         ))}
       </div>
-      
-      {/* Grid de notícias */}
+        
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {getCurrentPageItems().map(noticia => (
           <Card key={noticia.id} className="h-full flex flex-col">
@@ -268,7 +256,6 @@ export default function BlogPage() {
         ))}
       </div>
       
-      {/* Mensagem quando não há resultados */}
       {filteredNoticias.length === 0 && (
         <div className="text-center py-12">
           <p className="text-lg text-muted-foreground">Nenhum artigo encontrado com os filtros selecionados.</p>
@@ -285,7 +272,6 @@ export default function BlogPage() {
         </div>
       )}
       
-      {/* Paginação */}
       {filteredNoticias.length > 0 && (
         <div className="mt-12">
           <Pagination>
@@ -297,11 +283,9 @@ export default function BlogPage() {
                 />
               </PaginationItem>
               
-              {/* Renderizar links de páginas */}
-              {Array.from({ length: totalPages }).map((_, index) => {
+                {Array.from({ length: totalPages }).map((_, index) => {
                 const pageNumber = index + 1;
                 
-                // Mostrar apenas páginas próximas da atual para não sobrecarregar a UI
                 if (
                   pageNumber === 1 || 
                   pageNumber === totalPages || 

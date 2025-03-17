@@ -76,7 +76,6 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
       
         <BreadcrumbNav items={breadcrumbItems} />
         
-        {/* Cabeçalho da notícia */}
         <header className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
             <Badge variant="outline">{noticia.categoria}</Badge>
@@ -102,13 +101,11 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
         />
         </div>
         
-        {/* Conteúdo da notícia */}
         <div 
           className="prose prose-stone dark:prose-invert max-w-none mb-12"
           dangerouslySetInnerHTML={{ __html: noticia.conteudo }}
         />
         
-        {/* Tags */}
         <Separator className="my-8" />
         
         <div className="mb-8">
@@ -122,7 +119,6 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
         
-        {/* Compartilhar */}
         <Card className="mb-8">
           <CardContent className="pt-6">
             <h3 className="text-lg font-medium mb-4">Compartilhar</h3>
@@ -155,7 +151,6 @@ export default async function NoticiaPage({ params }: { params: Promise<{ id: st
           </CardContent>
         </Card>
         
-        {/* Botão de voltar */}
         <div className="text-center">
           <Button asChild>
             <Link href="/blog">Voltar para todas as notícias</Link>

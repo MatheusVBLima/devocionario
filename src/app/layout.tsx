@@ -34,11 +34,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main className="min-h-screen ">
+          
+          <main className="w-full relative">
+            <Header />
             {children}
+            <Footer />
           </main>
-          <Footer />
+         
         </ThemeProvider>
       </body>
     </html>

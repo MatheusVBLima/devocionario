@@ -14,7 +14,6 @@ export default async function OracaoPage({
   const oracaoId = parseInt(id);
   const oracao = oracoes.find(o => o.id === oracaoId);
   
-  // Se a oração não for encontrada, retorna 404
   if (!oracao) {
     notFound();
   }

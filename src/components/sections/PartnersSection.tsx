@@ -2,7 +2,6 @@ import { Wrapper } from "@/components/utils/Wrapper";
 import { AnimationContainer } from "@/components/utils/AnimationContainer";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-// Interface para os dados dos parceiros
 interface Partner {
   name: string;
   description: string;
@@ -10,7 +9,6 @@ interface Partner {
 }
 
 export function PartnersSection() {
-  // Dados dos parceiros
   const partnersData: Partner[] = [
     {
       name: "Paróquia São Pedro",
