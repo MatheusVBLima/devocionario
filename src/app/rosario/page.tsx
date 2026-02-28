@@ -3,14 +3,6 @@ import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { rosarioMysteries } from "@/data/rosario"
 import { buildMetadata } from "@/lib/seo"
 
@@ -23,45 +15,54 @@ export const metadata: Metadata = buildMetadata({
 
 export default function RosarioPage() {
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 md:px-6 lg:px-10 lg:py-24">
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs tracking-[0.18em] uppercase">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+        <Badge 
+          variant="secondary" 
+          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
+        >
           Devoção mariana
         </Badge>
-        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
           Santo Rosário
         </h1>
-        <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+        <div className="my-2 h-px w-12 bg-border/50" />
+        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
           Escolha um conjunto de mistérios para rezar o rosário com guia, reflexões e orações.
         </p>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="mx-auto mt-8 flex w-full max-w-4xl flex-col gap-12 sm:gap-16">
         {rosarioMysteries.map((misterio) => (
-          <Card key={misterio.id} className="flex h-full flex-col">
-            <CardHeader className="space-y-3">
-              <CardTitle>{misterio.nome}</CardTitle>
-              <CardDescription>{misterio.descricao}</CardDescription>
-              <Badge variant="secondary" className="w-fit">
+          <div
+            key={misterio.id}
+            className="group relative flex flex-col gap-6 rounded-[2rem] border border-transparent bg-muted/30 p-6 transition-all duration-500 hover:bg-muted/50 sm:p-10 md:flex-row md:items-start md:gap-10"
+          >
+            <div className="flex w-full flex-col gap-4 md:w-1/3">
+              <Badge variant="outline" className="w-fit border-border/50 bg-background/50">
                 {misterio.dias}
               </Badge>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                Os cinco mistérios
-              </h2>
-              <ol className="list-decimal space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
-                {misterio.misteriosDetalhados.map((item) => (
-                  <li key={item.titulo}>{item.titulo}</li>
-                ))}
-              </ol>
-            </CardContent>
-            <CardFooter>
-              <Button asChild>
-                <Link href={`/rosario/${misterio.id}`}>Rezar estes mistérios</Link>
+              <h2 className="text-3xl font-semibold tracking-tight">{misterio.nome}</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">{misterio.descricao}</p>
+              <Button asChild variant="secondary" className="mt-4 w-fit">
+                <Link href={`/rosario/${misterio.id}`}>Rezar {misterio.nome.toLowerCase()}</Link>
               </Button>
-            </CardFooter>
-          </Card>
+            </div>
+
+            <div className="flex-1">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Os cinco mistérios
+              </h3>
+              <ul className="flex flex-col gap-4">
+                {misterio.misteriosDetalhados.map((item, i) => (
+                  <li key={item.titulo} className="flex gap-4">
+                    <span className="text-lg font-medium text-muted-foreground/50">{i + 1}.</span>
+                    <span className="text-sm leading-relaxed text-foreground">{item.titulo}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         ))}
       </div>
     </div>

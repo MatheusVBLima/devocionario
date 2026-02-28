@@ -69,21 +69,24 @@ function ReadingCard({
   response?: { primary: string; secondary: string }
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        {description ? <CardDescription className="italic">{description}</CardDescription> : null}
-      </CardHeader>
-      <CardContent>
-        <div className="mb-6 whitespace-pre-line leading-8 text-foreground">{text}</div>
-        {response ? (
-          <div className="font-medium text-primary">
-            <p>{response.primary}</p>
-            <p className="text-muted-foreground">{response.secondary}</p>
-          </div>
-        ) : null}
-      </CardContent>
-    </Card>
+    <div className="mx-auto max-w-prose rounded-[2rem] border border-transparent bg-muted/30 px-6 py-10 transition-all duration-500 hover:bg-muted/50 sm:px-12 sm:py-14">
+      <div className="mb-8 text-center">
+        <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          {title}
+        </h2>
+        {description ? <p className="mt-2 text-lg italic text-muted-foreground">{description}</p> : null}
+        <div className="mx-auto mt-8 h-px w-16 bg-border/50" />
+      </div>
+      <div className="mb-10 whitespace-pre-line text-lg leading-loose text-foreground sm:text-xl sm:leading-loose">
+        {text}
+      </div>
+      {response ? (
+        <div className="flex flex-col items-center gap-2 text-center text-lg italic text-red-700/80 dark:text-red-400/80 sm:text-xl">
+          <p>— {response.primary}</p>
+          <p className="font-semibold">— {response.secondary}</p>
+        </div>
+      ) : null}
+    </div>
   )
 }
 
@@ -207,33 +210,44 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
 
       <TabsContent value="oracoes">
         {hasOracoes ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Oracoes do dia</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 leading-8">
+          <div className="mx-auto max-w-prose rounded-[2rem] border border-transparent bg-muted/30 px-6 py-10 transition-all duration-500 hover:bg-muted/50 sm:px-12 sm:py-14">
+            <div className="mb-12 text-center">
+              <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                Orações do dia
+              </h2>
+              <div className="mx-auto mt-8 h-px w-16 bg-border/50" />
+            </div>
+            <div className="space-y-12 text-lg leading-loose sm:text-xl sm:leading-loose">
               {hasText(liturgia.oracoes.coleta) ? (
                 <div>
-                  <h3 className="font-semibold">Oracao da coleta</h3>
-                  <p className="text-muted-foreground">{liturgia.oracoes.coleta}</p>
+                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
+                    Oração da coleta
+                  </h3>
+                  <p className="text-foreground">{liturgia.oracoes.coleta}</p>
                 </div>
               ) : null}
               {hasText(liturgia.oracoes.oferendas) ? (
                 <div>
-                  <h3 className="font-semibold">Oracao sobre as oferendas</h3>
-                  <p className="text-muted-foreground">{liturgia.oracoes.oferendas}</p>
+                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
+                    Oração sobre as oferendas
+                  </h3>
+                  <p className="text-foreground">{liturgia.oracoes.oferendas}</p>
                 </div>
               ) : null}
               {hasText(liturgia.oracoes.comunhao) ? (
                 <div>
-                  <h3 className="font-semibold">Oracao depois da comunhao</h3>
-                  <p className="text-muted-foreground">{liturgia.oracoes.comunhao}</p>
+                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
+                    Oração depois da comunhão
+                  </h3>
+                  <p className="text-foreground">{liturgia.oracoes.comunhao}</p>
                 </div>
               ) : null}
               {liturgia.oracoes.extras.some((item) => hasText(item)) ? (
                 <div>
-                  <h3 className="font-semibold">Oracoes extras</h3>
-                  <div className="space-y-2 text-muted-foreground">
+                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
+                    Orações extras
+                  </h3>
+                  <div className="space-y-4 text-foreground">
                     {liturgia.oracoes.extras
                       .filter((item) => hasText(item))
                       .map((item, index) => (
@@ -242,8 +256,8 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
                   </div>
                 </div>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : (
           <AppEmptyState
             title="Oracoes indisponiveis"
@@ -255,25 +269,32 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
 
       <TabsContent value="antifonas">
         {hasAntifonas ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Antifonas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 leading-8">
+          <div className="mx-auto max-w-prose rounded-[2rem] border border-transparent bg-muted/30 px-6 py-10 transition-all duration-500 hover:bg-muted/50 sm:px-12 sm:py-14">
+            <div className="mb-12 text-center">
+              <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                Antífonas
+              </h2>
+              <div className="mx-auto mt-8 h-px w-16 bg-border/50" />
+            </div>
+            <div className="space-y-12 text-lg leading-loose sm:text-xl sm:leading-loose">
               {hasText(liturgia.antifonas.entrada) ? (
                 <div>
-                  <h3 className="font-semibold">Antifona de entrada</h3>
-                  <p className="text-muted-foreground">{liturgia.antifonas.entrada}</p>
+                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
+                    Antífona de entrada
+                  </h3>
+                  <p className="text-foreground">{liturgia.antifonas.entrada}</p>
                 </div>
               ) : null}
               {hasText(liturgia.antifonas.comunhao) ? (
                 <div>
-                  <h3 className="font-semibold">Antifona da comunhao</h3>
-                  <p className="text-muted-foreground">{liturgia.antifonas.comunhao}</p>
+                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
+                    Antífona da comunhão
+                  </h3>
+                  <p className="text-foreground">{liturgia.antifonas.comunhao}</p>
                 </div>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : (
           <AppEmptyState
             title="Antifonas indisponiveis"

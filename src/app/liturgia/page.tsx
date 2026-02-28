@@ -97,26 +97,30 @@ export default async function LiturgiaPage() {
   const liturgia = await getLiturgiaData()
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 md:px-6 lg:py-24">
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs uppercase tracking-[0.18em]">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-20 md:px-6 lg:py-32">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+        <Badge 
+          variant="secondary" 
+          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
+        >
           Leitura do dia
         </Badge>
-        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
           Liturgia Diaria
         </h1>
+        <div className="my-2 h-px w-12 bg-border/50" />
 
         {liturgia ? (
-          <>
-            <p className="text-base leading-7 text-muted-foreground sm:text-lg">
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
               {formatDate(liturgia.data)} • {getWeekday(liturgia.data)}
             </p>
-            <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+            <p className="max-w-2xl text-pretty text-lg italic leading-8 text-muted-foreground">
               {liturgia.liturgia} • Cor liturgica: {liturgia.cor}
             </p>
-          </>
+          </div>
         ) : (
-          <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+          <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
             Acompanhe as leituras, o salmo e as oracoes do dia em uma interface pensada para leitura.
           </p>
         )}

@@ -62,15 +62,19 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const currentPosts = filteredPosts.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 md:px-6 lg:px-10 lg:py-24">
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs uppercase tracking-[0.18em]">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+        <Badge 
+          variant="secondary" 
+          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
+        >
           Conteudo editorial
         </Badge>
-        <h1 className="max-w-3xl text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h1 className="max-w-3xl text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
           Blog
         </h1>
-        <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+        <div className="my-2 h-px w-12 bg-border/50" />
+        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
           Noticias, formacoes e reflexoes sobre a vida da Igreja, espiritualidade e cultura catolica.
         </p>
       </header>
@@ -87,15 +91,17 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
       {currentPosts.length ? (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {currentPosts.map((post) => (
+          {currentPosts.map((post, index) => (
             <Card
               key={post.id}
-              className="flex h-full flex-col overflow-hidden border-border/70 bg-card/90 shadow-sm"
+              className={`group flex h-full flex-col overflow-hidden rounded-[2rem] border-transparent bg-muted/30 p-2 transition-all duration-500 hover:bg-muted/50 ${
+                index === 0 ? "md:col-span-2" : ""
+              }`}
             >
-              <CardHeader className="space-y-4">
+              <CardHeader className="space-y-4 px-6 pt-6">
                 <div className="flex items-start justify-between gap-3">
-                  <Badge variant="outline">{post.category}</Badge>
-                  <span className="text-xs text-muted-foreground">{post.date}</span>
+                  <Badge variant="outline" className="border-border/50 bg-background/50">{post.category}</Badge>
+                  <span className="text-xs font-medium text-muted-foreground">{post.date}</span>
                 </div>
                 <CardTitle className="line-clamp-2 text-xl leading-tight">{post.title}</CardTitle>
                 <CardDescription className="line-clamp-3 text-sm leading-6">
@@ -103,13 +109,13 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="flex-1">
+              <CardContent className="flex-1 px-6">
                 <p className="text-sm text-muted-foreground">
                   Por <span className="font-medium text-foreground">{post.author}</span>
                 </p>
               </CardContent>
 
-              <CardFooter>
+              <CardFooter className="px-6 pb-6">
                 <Button asChild className="w-full">
                   <Link href={`/blog/${post.id}`}>Ler artigo</Link>
                 </Button>

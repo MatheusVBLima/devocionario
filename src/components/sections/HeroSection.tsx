@@ -10,12 +10,12 @@ export function HeroSection() {
       <Wrapper>
         <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <div className="flex flex-col gap-6">
-            <span className="w-fit rounded-full border border-border/70 bg-card px-4 py-2 text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
+            <span className="w-fit rounded-full bg-secondary px-4 py-1.5 text-[0.65rem] font-semibold tracking-[0.2em] text-primary shadow-sm uppercase">
               Portal católico
             </span>
 
             <div className="space-y-5">
-              <h1 className="max-w-3xl text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="max-w-3xl text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
                 Um lugar simples para rezar, ler e acompanhar a vida da Igreja todos os dias.
               </h1>
               <p className="max-w-2xl text-pretty text-base leading-8 text-muted-foreground sm:text-lg">

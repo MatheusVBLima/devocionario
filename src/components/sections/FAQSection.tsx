@@ -13,7 +13,7 @@ export function FAQSection() {
       <Wrapper className="space-y-10">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
           <span className="section-kicker">Perguntas frequentes</span>
-          <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h2 className="text-balance font-serif text-3xl font-light tracking-tight sm:text-4xl">
             Respostas rápidas para começar a usar o conteúdo do site.
           </h2>
         </div>

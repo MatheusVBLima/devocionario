@@ -1,3 +1,5 @@
+import { Instagram } from "lucide-react"
+
 import { navLinks, siteConfig } from "@/lib/site"
 import { PrefetchLink } from "@/components/PrefetchLink"
 
@@ -41,8 +43,17 @@ export default function Footer() {
               Contato
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li>{siteConfig.contactEmail}</li>
-              <li>{siteConfig.url}</li>
+              <li>
+                <a
+                  href="https://instagram.com/devocionarioapp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
+                >
+                  <Instagram className="size-4" />
+                  Instagram
+                </a>
+              </li>
             </ul>
           </div>
         </div>

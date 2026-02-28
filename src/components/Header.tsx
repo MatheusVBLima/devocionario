@@ -19,12 +19,14 @@ import { Wrapper } from "@/components/utils/Wrapper"
 import { cn } from "@/lib/utils"
 import { navLinks } from "@/lib/site"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export default function Header() {
   const [visible, setVisible] = useState(false)
   const { theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const { scrollY } = useScroll()
+  const pathname = usePathname()
 
   useEffect(() => {
     setMounted(true)
@@ -76,22 +78,38 @@ export default function Header() {
 
           <div className="flex min-w-0 items-center justify-center gap-x-1 text-sm font-medium text-muted-foreground">
             <AnimatePresence>
-              {navLinks.map((link, index) => (
-                <AnimationContainer
-                  key={link.href}
-                  animation="fadeDown"
-                  delay={0.1 * index}
-                >
-                  <div className="relative">
-                    <Link
-                      href={link.href}
-                      className="rounded-md px-3 py-2 whitespace-nowrap transition-all duration-500 hover:bg-accent hover:text-primary xl:px-4"
-                    >
-                      {link.name}
-                    </Link>
-                  </div>
-                </AnimationContainer>
-              ))}
+              {navLinks.map((link, index) => {
+                const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                
+                return (
+                  <AnimationContainer
+                    key={link.href}
+                    animation="fadeDown"
+                    delay={0.1 * index}
+                  >
+                    <div className="relative">
+                      <Link
+                        href={link.href}
+                        className={cn(
+                          "relative rounded-full px-4 py-2 whitespace-nowrap transition-colors duration-300 xl:px-5 hover:text-primary",
+                          isActive ? "text-primary font-semibold" : ""
+                        )}
+                      >
+                        {link.name}
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeTabIndicator"
+                            className="absolute -bottom-1 left-4 right-4 h-0.5 rounded-full bg-primary"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        )}
+                      </Link>
+                    </div>
+                  </AnimationContainer>
+                )
+              })}
             </AnimatePresence>
           </div>
 
@@ -127,13 +145,21 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                {navLinks.map((link) => (
-                  <DropdownMenuItem key={link.href} asChild>
-                    <Link href={link.href} className="w-full cursor-pointer">
-                      {link.name}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                  
+                  return (
+                    <DropdownMenuItem 
+                      key={link.href} 
+                      asChild
+                      className={isActive ? "bg-primary/10 text-primary font-medium" : ""}
+                    >
+                      <Link href={link.href} className="w-full cursor-pointer">
+                        {link.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  )
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

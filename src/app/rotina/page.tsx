@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
+import { Sun, BookOpen, Moon, Heart, UtensilsCrossed, HandHeart } from "lucide-react"
 
 import { SantoImage } from "@/components/SantoImage"
 import { Badge } from "@/components/ui/badge"
@@ -21,40 +22,40 @@ const routineTips = [
   {
     title: "Oração da manhã",
     description: "Comece o dia oferecendo o trabalho, a família e as intenções ao Senhor.",
-    icon: "☀",
+    icon: <Sun className="size-6 text-primary/70" />,
     type: "Diária",
   },
   {
     title: "Leitura espiritual",
     description: "Reserve alguns minutos para a leitura da Bíblia ou de um texto espiritual.",
-    icon: "📖",
+    icon: <BookOpen className="size-6 text-primary/70" />,
     type: "Diária",
   },
   {
     title: "Exame de consciência",
     description: "Revise o dia diante de Deus e peça luz para continuar a caminhada.",
-    icon: "🌙",
+    icon: <Moon className="size-6 text-primary/70" />,
     type: "Diária",
   },
   {
     title: "Rosário",
     description: "Dedique tempo para rezar o Santo Rosário e contemplar os mistérios da vida de Cristo.",
-    icon: "📿",
+    icon: <Heart className="size-6 text-primary/70" />,
     type: "Diária",
   },
   {
     title: "Jejum às sextas",
     description: "Viva uma pequena penitência semanal em união com a Paixão do Senhor.",
-    icon: "🍞",
+    icon: <UtensilsCrossed className="size-6 text-primary/70" />,
     type: "Semanal",
   },
   {
     title: "Confissão frequente",
     description: "Busque com regularidade o sacramento da reconciliação como parte da vida espiritual.",
-    icon: "🙏",
+    icon: <HandHeart className="size-6 text-primary/70" />,
     type: "Mensal",
   },
-] as const
+]
 
 const monthNames = [
   "janeiro",
@@ -87,20 +88,24 @@ export default function RotinaPage() {
   const santoDoDia = getSaintOfTheDay()
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 py-16 md:px-6 lg:px-10 lg:py-24">
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs tracking-[0.18em] uppercase">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+        <Badge 
+          variant="secondary" 
+          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
+        >
           Vida espiritual
         </Badge>
-        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
           Rotina Católica
         </h1>
-        <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+        <div className="my-2 h-px w-12 bg-border/50" />
+        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
           Sugestões simples para incorporar a fé ao dia a dia e acompanhar o santo celebrado hoje.
         </p>
       </header>
 
-      <section className="grid gap-8 rounded-[2rem] border border-border/70 bg-card/70 p-5 md:p-8 lg:grid-cols-[1.05fr_1.35fr]">
+      <section className="grid gap-8 rounded-[2rem] border border-transparent bg-muted/30 p-5 transition-all duration-500 hover:bg-muted/50 md:p-8 lg:grid-cols-[1.05fr_1.35fr]">
         <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-muted">
           {santoDoDia.imagem ? (
             <SantoImage
@@ -161,18 +166,21 @@ export default function RotinaPage() {
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {routineTips.map((tip) => (
-            <Card key={tip.title} className="h-full">
-              <CardHeader className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{tip.icon}</span>
-                  <CardTitle>{tip.title}</CardTitle>
+            <Card
+              key={tip.title}
+              className="group flex h-full flex-col overflow-hidden rounded-[2rem] border-transparent bg-muted/30 p-2 transition-all duration-500 hover:bg-muted/50"
+            >
+              <CardHeader className="space-y-4 px-6 pt-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex size-12 items-center justify-center rounded-2xl bg-background shadow-sm transition-colors duration-500 group-hover:bg-background/80">
+                    {tip.icon}
+                  </div>
+                  <Badge variant="outline" className="border-border/50 bg-background/50">{tip.type}</Badge>
                 </div>
-                <Badge variant="outline" className="w-fit">
-                  {tip.type}
-                </Badge>
+                <CardTitle className="text-xl font-medium tracking-tight">{tip.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-6 text-muted-foreground">{tip.description}</p>
+              <CardContent className="px-6 pb-6">
+                <p className="text-sm leading-relaxed text-muted-foreground">{tip.description}</p>
               </CardContent>
             </Card>
           ))}

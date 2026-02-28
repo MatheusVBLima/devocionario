@@ -79,15 +79,19 @@ export default async function SantosPage({ searchParams }: SantosPageProps) {
   const currentSantos = filteredSantos.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 md:px-6 lg:px-10 lg:py-24">
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs uppercase tracking-[0.18em]">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+        <Badge 
+          variant="secondary" 
+          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
+        >
           Calendario liturgico
         </Badge>
-        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
           Calendario dos Santos
         </h1>
-        <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+        <div className="my-2 h-px w-12 bg-border/50" />
+        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
           Conheca os santos celebrados ao longo do ano com acesso rapido a biografias e oracoes.
         </p>
       </header>
@@ -104,36 +108,47 @@ export default async function SantosPage({ searchParams }: SantosPageProps) {
 
       {currentSantos.length ? (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {currentSantos.map((santo) => (
-            <Card key={santo.id} className="flex h-full flex-col overflow-hidden">
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-                {santo.imagem ? (
-                  <SantoImage
-                    src={santo.imagem}
-                    alt={santo.nome}
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                  />
-                ) : (
-                  <Image
-                    src="/placeholder.svg"
-                    alt={santo.nome}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                  />
-                )}
+          {currentSantos.map((santo, index) => (
+            <Card
+              key={santo.id}
+              className={`group flex h-full flex-col overflow-hidden rounded-[2rem] border-transparent bg-muted/30 p-2 transition-all duration-500 hover:bg-muted/50 ${
+                index === 0 ? "md:col-span-2" : ""
+              }`}
+            >
+              <div className="pb-0">
+                <div
+                  className={`relative w-full overflow-hidden rounded-[1.5rem] bg-muted ${
+                    index === 0 ? "aspect-[4/3] md:aspect-[2/1] xl:aspect-[21/9]" : "aspect-[4/3]"
+                  }`}
+                >
+                  {santo.imagem ? (
+                    <SantoImage
+                      src={santo.imagem}
+                      alt={santo.nome}
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <Image
+                      src="/placeholder.svg"
+                      alt={santo.nome}
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    />
+                  )}
+                </div>
               </div>
-              <CardHeader className="space-y-4">
-                <Badge variant="outline" className="w-fit">
+              <CardHeader className="space-y-4 px-6 pt-6">
+                <Badge variant="outline" className="w-fit border-border/50 bg-background/50">
                   {formatDate(santo.dia, santo.mes)}
                 </Badge>
                 <CardTitle className="line-clamp-2 text-xl">{santo.nome}</CardTitle>
               </CardHeader>
-              <CardContent className="flex-1">
+              <CardContent className="flex-1 px-6">
                 <p className="line-clamp-4 text-sm leading-6 text-muted-foreground">{santo.sobre}</p>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="px-6 pb-6">
                 <Button variant="secondary" className="w-full" asChild>
                   <Link href={`/santos/${santo.id}`}>Ver detalhes</Link>
                 </Button>

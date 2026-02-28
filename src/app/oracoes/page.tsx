@@ -66,13 +66,17 @@ export default async function OracoesPage({ searchParams }: OracoesPageProps) {
   const currentOracoes = filteredOracoes.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 md:px-6 lg:px-10 lg:py-24">
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs uppercase tracking-[0.18em]">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+        <Badge 
+          variant="secondary" 
+          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
+        >
           Vida de oracao
         </Badge>
-        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">Oracoes</h1>
-        <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">Oracoes</h1>
+        <div className="my-2 h-px w-12 bg-border/50" />
+        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
           Uma colecao de oracoes catolicas organizadas por tema, para leitura simples e acesso rapido.
         </p>
       </header>
@@ -89,33 +93,44 @@ export default async function OracoesPage({ searchParams }: OracoesPageProps) {
 
       {currentOracoes.length ? (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {currentOracoes.map((oracao) => (
-            <Card key={oracao.id} className="flex h-full flex-col overflow-hidden">
+          {currentOracoes.map((oracao, index) => (
+            <Card
+              key={oracao.id}
+              className={`group flex h-full flex-col overflow-hidden rounded-[2rem] border-transparent bg-muted/30 p-2 transition-all duration-500 hover:bg-muted/50 ${
+                index === 0 ? "md:col-span-2" : ""
+              }`}
+            >
               {oracao.imageUrl ? (
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
-                  <Image
-                    src={oracao.imageUrl}
-                    alt={oracao.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                  />
+                <div className="pb-0">
+                  <div
+                    className={`relative w-full overflow-hidden rounded-[1.5rem] bg-muted ${
+                      index === 0 ? "aspect-[16/9] md:aspect-[21/9]" : "aspect-[16/10]"
+                    }`}
+                  >
+                    <Image
+                      src={oracao.imageUrl}
+                      alt={oracao.title}
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    />
+                  </div>
                 </div>
               ) : null}
 
-              <CardHeader className="space-y-4">
+              <CardHeader className="space-y-4 px-6 pt-6">
                 <CardTitle className="line-clamp-2 text-xl">{oracao.title}</CardTitle>
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline">{oracao.category}</Badge>
+                  <Badge variant="outline" className="border-border/50 bg-background/50">{oracao.category}</Badge>
                   <Badge variant="secondary">{estimateReadingTime(oracao.content)}</Badge>
                 </div>
               </CardHeader>
-              <CardContent className="flex-1">
+              <CardContent className="flex-1 px-6">
                 <p className="line-clamp-4 text-sm leading-6 text-muted-foreground">
                   {oracao.content.replace(/\n/g, " ").replace(/\*\*/g, "")}
                 </p>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="px-6 pb-6">
                 <Button asChild className="w-full">
                   <Link href={`/oracoes/${oracao.id}`}>Ver oracao</Link>
                 </Button>

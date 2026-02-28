@@ -1,27 +1,30 @@
+import React from "react"
+import { Cross, BookOpen, HandHeart, CalendarHeart } from "lucide-react"
+
 export const homeFeatures = [
   {
-    icon: "✝",
+    icon: <Cross className="size-5" />,
     title: "Santo Rosário",
     description:
       "Explore os mistérios gloriosos, gozosos, luminosos e dolorosos com uma navegação direta e clara.",
     href: "/rosario",
   },
   {
-    icon: "📖",
+    icon: <BookOpen className="size-5" />,
     title: "Liturgia Diária",
     description:
       "Acompanhe as leituras do dia, salmo, evangelho e orações com uma estrutura pensada para leitura.",
     href: "/liturgia",
   },
   {
-    icon: "🙏",
+    icon: <HandHeart className="size-5" />,
     title: "Orações",
     description:
       "Encontre orações católicas por categoria, com acesso rápido e leitura confortável em qualquer tela.",
     href: "/oracoes",
   },
   {
-    icon: "🕊",
+    icon: <CalendarHeart className="size-5" />,
     title: "Rotina Católica",
     description:
       "Descubra inspirações para a vida espiritual diária e conheça o santo celebrado em cada data.",
