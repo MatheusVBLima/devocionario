@@ -1,20 +1,12 @@
 "use client"
 
-import { cn } from "@/lib/utils"
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useScroll,
-} from "framer-motion"
-import { MenuIcon } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
-import { RefObject, useRef, useState, useEffect } from "react"
-import { AnimationContainer } from "@/components/utils/AnimationContainer"
-import { Wrapper } from "@/components/utils/Wrapper"
-import { ThemeSwitcher } from './ThemeSwitcher'
+import { MenuIcon } from "lucide-react"
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion"
+import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
+
+import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -22,91 +14,36 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-
-export const useClickOutside = (handler: () => void) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useRef<() => void>(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        handler();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  });
-
-  return ref;
-};
-
-export const NAV_LINKS = [
-  {
-    name: "Santo Rosário",
-    link: "/rosario",
-  },
-  {
-    name: "Liturgia",
-    link: "/liturgia",
-  },
-  {
-    name: "Orações",
-    link: "/oracoes",
-  },
-  {
-    name: "Rotina Católica",
-    link: "/rotina",
-  },
-  {
-    name: "Santos",
-    link: "/santos",
-  },
-  {
-    name: "Blog",
-    link: "/blog",
-  },
-]
+import { AnimationContainer } from "@/components/utils/AnimationContainer"
+import { Wrapper } from "@/components/utils/Wrapper"
+import { cn } from "@/lib/utils"
+import { navLinks } from "@/lib/site"
+import Link from "next/link"
 
 export default function Header() {
-  const ref = useRef<HTMLDivElement | null>(null)
-  const [open, setOpen] = useState(false)
-  const [visible, setVisible] = useState<boolean>(false)
+  const [visible, setVisible] = useState(false)
   const { theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  
+  const { scrollY } = useScroll()
+
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const mobileMenuRef = useClickOutside(() => {
-    if (open) setOpen(false)
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setVisible(latest > 100)
   })
 
-  const { scrollY } = useScroll({
-    target: ref as RefObject<HTMLDivElement>,
-    offset: ["start start", "end start"],
-  })
-
-  useMotionValueEvent(scrollY, "change", latest => {
-    if (latest > 100) {
-      setVisible(true)
-    } else {
-      setVisible(false)
-    }
-  })
-
-  const logoSrc = mounted && (theme === 'dark' || resolvedTheme === 'dark') 
-    ? "/logo-white.svg" 
-    : "/logo.svg";
+  const logoSrc =
+    mounted && (theme === "dark" || resolvedTheme === "dark")
+      ? "/logo-white.svg"
+      : "/logo.svg"
 
   return (
-    <header className="fixed w-full top-0 inset-x-0 z-50">
+    <header className="fixed inset-x-0 top-0 z-50 w-full">
       <motion.div
         animate={{
-          width: visible ? "70%" : "100%",
+          width: visible ? "86%" : "100%",
           y: visible ? 20 : 0,
         }}
         transition={{
@@ -118,12 +55,12 @@ export default function Header() {
           minWidth: "800px",
         }}
         className={cn(
-          "hidden lg:flex bg-transparent self-start items-center justify-between py-4 rounded-full relative z-[50] mx-auto w-full backdrop-blur",
+          "relative z-50 mx-auto hidden w-full items-center justify-between rounded-full bg-transparent py-4 backdrop-blur lg:flex",
           visible &&
-            "bg-background/60 py-2 border border-t-foreground/20 border-b-foreground/10 border-x-foreground/15 w-full"
+            "border border-t-foreground/20 border-x-foreground/15 border-b-foreground/10 bg-background/60 py-2",
         )}
       >
-        <Wrapper className="flex items-center justify-between lg:px-4">
+        <Wrapper className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-8 lg:px-4">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -131,24 +68,24 @@ export default function Header() {
           >
             <Link href="/" className="flex items-center gap-2">
               <Image src={logoSrc} alt="Devocionário" width={22} height={22} />
-              <span className="text-2xl font-bold !leading-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
+              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-2xl font-bold !leading-tight text-transparent">
                 Devocionário
               </span>
             </Link>
           </motion.div>
 
-          <div className="hidden lg:flex flex-row flex-1 absolute inset-0 items-center justify-center w-max mx-auto gap-x-2 text-sm text-muted-foreground font-medium">
+          <div className="flex min-w-0 items-center justify-center gap-x-1 text-sm font-medium text-muted-foreground">
             <AnimatePresence>
-              {NAV_LINKS.map((link, index) => (
+              {navLinks.map((link, index) => (
                 <AnimationContainer
-                  key={index}
+                  key={link.href}
                   animation="fadeDown"
                   delay={0.1 * index}
                 >
                   <div className="relative">
                     <Link
-                      href={link.link}
-                      className="hover:text-primary transition-all duration-500 hover:bg-accent rounded-md px-4 py-2"
+                      href={link.href}
+                      className="rounded-md px-3 py-2 whitespace-nowrap transition-all duration-500 hover:bg-accent hover:text-primary xl:px-4"
                     >
                       {link.name}
                     </Link>
@@ -166,25 +103,23 @@ export default function Header() {
         </Wrapper>
       </motion.div>
 
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-b border-border py-3 px-4 z-50">
+      <div className="fixed left-0 right-0 top-0 z-50 border-b border-border bg-background/80 px-4 py-3 backdrop-blur-sm lg:hidden">
         <div className="flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-        <Image 
-              src={logoSrc} 
-              alt="Devocionário" 
-              width={28} 
-              height={28} 
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src={logoSrc}
+              alt="Devocionário"
+              width={28}
+              height={28}
               priority
-              className="size-10" 
+              className="size-10"
             />
-            <span className="text-lg font-bold text-primary">
-              Devocionário
-            </span>
+            <span className="text-lg font-bold text-primary">Devocionário</span>
           </Link>
-          
+
           <div className="flex items-center gap-3">
             <ThemeSwitcher />
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -192,19 +127,18 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                {NAV_LINKS.map((link, index) => (
-                  <DropdownMenuItem key={index} asChild>
-                    <Link href={link.link} className="w-full cursor-pointer">
+                {navLinks.map((link) => (
+                  <DropdownMenuItem key={link.href} asChild>
+                    <Link href={link.href} className="w-full cursor-pointer">
                       {link.name}
                     </Link>
                   </DropdownMenuItem>
                 ))}
-               
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
       </div>
     </header>
-  );
+  )
 }

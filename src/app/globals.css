@@ -122,15 +122,10 @@
   }
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+.home-section {
+  padding-block: clamp(3.5rem, 8vw, 6rem);
 }
 
-.animate-marquee {
-  animation: marquee 60s linear infinite;
+.section-kicker {
+  @apply rounded-full border border-border/70 bg-card px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground;
 }

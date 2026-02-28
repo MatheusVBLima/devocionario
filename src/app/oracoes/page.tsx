@@ -1,277 +1,144 @@
-'use client';
+import type { Metadata } from "next"
+import Image from "next/image"
+import Link from "next/link"
+import { HandHeart } from "lucide-react"
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Oracao, oracoes } from "@/data/oracoes";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { AppEmptyState } from "@/components/AppEmptyState"
+import { CollectionPagination } from "@/components/CollectionPagination"
+import { CollectionFilters } from "@/components/filters/CollectionFilters"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { oracoes } from "@/data/oracoes"
+import { parsePositivePage } from "@/lib/routes"
+import { buildMetadata } from "@/lib/seo"
 
-export default function OracoesPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Todas');
-  const [filteredOracoes, setFilteredOracoes] = useState<Oracao[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+const ITEMS_PER_PAGE = 9
 
-  // Extrair categorias únicas das orações reais
-  const [categorias, setCategorias] = useState<string[]>(['Todas']);
+export const metadata: Metadata = buildMetadata({
+  title: "Oracoes catolicas",
+  description:
+    "Consulte oracoes catolicas por categoria, com leitura organizada e acesso rapido para diferentes momentos da vida espiritual.",
+  pathname: "/oracoes",
+})
 
-  // Inicializar dados quando o componente é montado
-  useEffect(() => {
-    // Ordenar por ordem (order) e depois por título
-    const sortedOracoes = [...oracoes].sort((a, b) => {
-      if (a.order !== b.order) {
-        return a.order - b.order;
-      }
-      return a.title.localeCompare(b.title);
-    });
-    
-    // Extrair categorias únicas
-    const uniqueCategories = ['Todas', ...new Set(oracoes.map(oracao => oracao.category))];
-    setCategorias(uniqueCategories);
-    
-    setFilteredOracoes(sortedOracoes);
-    setLoading(false);
-  }, []);
+type OracoesPageProps = {
+  searchParams: Promise<{
+    q?: string
+    categoria?: string
+    page?: string
+  }>
+}
 
-  // Filtrar orações com base na pesquisa e categoria
-  useEffect(() => {
-    let filtered = [...oracoes];
-    
-    // Filtrar por termo de pesquisa
-    if (searchTerm) {
-      filtered = filtered.filter(oracao => 
-        oracao.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        oracao.content.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    // Filtrar por categoria
-    if (selectedCategory !== 'Todas') {
-      filtered = filtered.filter(oracao => oracao.category === selectedCategory);
-    }
-    
-    // Ordenar por ordem (order) e depois por título
-    filtered.sort((a, b) => {
-      if (a.order !== b.order) {
-        return a.order - b.order;
-      }
-      return a.title.localeCompare(b.title);
-    });
-    
-    setFilteredOracoes(filtered);
-    setCurrentPage(1); // Resetar para a primeira página quando filtros mudam
-  }, [searchTerm, selectedCategory]);
+function estimateReadingTime(content: string) {
+  const words = content.split(/\s+/).length
+  const minutes = Math.max(1, Math.ceil(words / 150))
+  return `${minutes} min`
+}
 
-  // Calcular número total de páginas
-  const totalPages = Math.ceil(filteredOracoes.length / itemsPerPage);
-  
-  // Obter orações para a página atual
-  const getCurrentPageItems = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredOracoes.slice(startIndex, endIndex);
-  };
+export default async function OracoesPage({ searchParams }: OracoesPageProps) {
+  const params = await searchParams
+  const query = params.q?.trim().toLowerCase() ?? ""
+  const categoria = params.categoria?.trim() ?? "Todas"
+  const currentPage = parsePositivePage(params.page)
 
-  // Formatar a duração estimada baseada no tamanho do conteúdo
-  const estimarTempo = (content: string) => {
-    const palavras = content.split(/\s+/).length;
-    const minutos = Math.max(1, Math.ceil(palavras / 150)); // ~150 palavras por minuto
-    return `${minutos} min`;
-  };
+  const categorias = ["Todas", ...new Set(oracoes.map((oracao) => oracao.category))]
 
-  // Componente de skeleton para os cards
-  const SkeletonCard = () => (
-    <Card className="flex flex-col h-full">
-      <CardHeader>
-        <Skeleton className="h-6 w-[70%] mb-1" />
-        <Skeleton className="h-4 w-[90%]" />
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <Skeleton className="h-40 w-full mb-4" />
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-[80%] mb-2" />
-        <div className="flex gap-2 mt-4">
-          <Skeleton className="h-5 w-20" />
-          <Skeleton className="h-5 w-16" />
-        </div>
-      </CardContent>
-      <CardFooter className="mt-auto pt-2">
-        <Skeleton className="h-10 w-full" />
-      </CardFooter>
-    </Card>
-  );
+  const filteredOracoes = [...oracoes]
+    .filter((oracao) => {
+      const matchesQuery =
+        !query ||
+        oracao.title.toLowerCase().includes(query) ||
+        oracao.content.toLowerCase().includes(query)
+
+      const matchesCategory = categoria === "Todas" || oracao.category === categoria
+
+      return matchesQuery && matchesCategory
+    })
+    .sort((a, b) => {
+      if (a.order !== b.order) return a.order - b.order
+      return a.title.localeCompare(b.title, "pt-BR")
+    })
+
+  const totalPages = Math.max(1, Math.ceil(filteredOracoes.length / ITEMS_PER_PAGE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const startIndex = (safeCurrentPage - 1) * ITEMS_PER_PAGE
+  const currentOracoes = filteredOracoes.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   return (
-    <div className="container mx-auto px-8 py-20 lg:py-32">
-      <h1 className="text-4xl font-bold text-center mb-4 text-primary">Orações</h1>
-      <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-        Uma coleção de orações católicas para todos os momentos. Encontre orações tradicionais, 
-        devoções aos santos, e práticas espirituais para fortalecer sua fé.
-      </p>
-      
-      <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-8">
-        <div className="relative w-full max-w-md">
-          <Input
-            type="text"
-            placeholder="Pesquisar orações..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full"
-          />
-        </div>
-        
-        <div className="w-full md:w-auto min-w-[200px]">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="Categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              {categorias.map(categoria => (
-                <SelectItem key={categoria} value={categoria}>{categoria}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 9 }).map((_, index) => (
-            <SkeletonCard key={index} />
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 md:px-6 lg:px-10 lg:py-24">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs uppercase tracking-[0.18em]">
+          Vida de oracao
+        </Badge>
+        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">Oracoes</h1>
+        <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+          Uma colecao de oracoes catolicas organizadas por tema, para leitura simples e acesso rapido.
+        </p>
+      </header>
+
+      <CollectionFilters
+        searchPlaceholder="Pesquisar oracoes..."
+        selectParamKey="categoria"
+        selectPlaceholder="Filtrar por categoria"
+        selectOptions={categorias.map((item) => ({
+          label: item,
+          value: item,
+        }))}
+      />
+
+      {currentOracoes.length ? (
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {currentOracoes.map((oracao) => (
+            <Card key={oracao.id} className="flex h-full flex-col overflow-hidden">
+              {oracao.imageUrl ? (
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                  <Image
+                    src={oracao.imageUrl}
+                    alt={oracao.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                  />
+                </div>
+              ) : null}
+
+              <CardHeader className="space-y-4">
+                <CardTitle className="line-clamp-2 text-xl">{oracao.title}</CardTitle>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline">{oracao.category}</Badge>
+                  <Badge variant="secondary">{estimateReadingTime(oracao.content)}</Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <p className="line-clamp-4 text-sm leading-6 text-muted-foreground">
+                  {oracao.content.replace(/\n/g, " ").replace(/\*\*/g, "")}
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button asChild className="w-full">
+                  <Link href={`/oracoes/${oracao.id}`}>Ver oracao</Link>
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
         </div>
       ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {getCurrentPageItems().map(oracao => (
-              <Card key={oracao.id} className="flex flex-col h-full">
-                <CardHeader>
-                  <CardTitle className="line-clamp-2">{oracao.title}</CardTitle>
-                  <div className="flex gap-2 mt-2">
-                    <Badge variant="outline">{oracao.category}</Badge>
-                    <Badge variant="secondary">{estimarTempo(oracao.content)}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  {oracao.imageUrl && (
-                    <div className="relative h-40 w-full mb-4">
-                      <Image
-                        src={oracao.imageUrl}
-                        alt={oracao.title}
-                        fill
-                        className="object-cover rounded-lg"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = "/placeholder.svg?height=160&width=320";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <p className="line-clamp-3 text-muted-foreground">
-                    {oracao.content.replace(/\n/g, ' ').replace(/\*\*/g, '')}
-                  </p>
-                </CardContent>
-                <CardFooter className="mt-auto pt-2">
-                  <Button asChild className="w-full">
-                    <Link href={`/oracoes/${oracao.id}`}>Ver Oração</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-          
-          {filteredOracoes.length === 0 && (
-            <div className="col-span-full text-center py-10">
-              <p className="text-lg text-muted-foreground">Nenhuma oração encontrada para sua busca.</p>
-              <Button 
-                variant="outline" 
-                className="mt-4"
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('Todas');
-                }}
-              >
-                Limpar filtros
-              </Button>
-            </div>
-          )}
-          
-          {filteredOracoes.length > 0 && totalPages > 1 && (
-            <div className="mt-12">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
-                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  
-                  {Array.from({ length: totalPages }).map((_, index) => {
-                    const pageNumber = index + 1;
-                    
-                    if (
-                      pageNumber === 1 || 
-                      pageNumber === totalPages || 
-                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                    ) {
-                      return (
-                        <PaginationItem key={pageNumber}>
-                          <PaginationLink 
-                            isActive={currentPage === pageNumber}
-                            onClick={() => setCurrentPage(pageNumber)}
-                          >
-                            {pageNumber}
-                          </PaginationLink>
-                        </PaginationItem>
-                      );
-                    } else if (
-                      (pageNumber === currentPage - 2 && currentPage > 3) || 
-                      (pageNumber === currentPage + 2 && currentPage < totalPages - 2)
-                    ) {
-                      return (
-                        <PaginationItem key={pageNumber}>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      );
-                    }
-                    return null;
-                  })}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
-                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
-        </>
+        <AppEmptyState
+          title="Nenhuma oracao encontrada"
+          description="Nao encontramos oracoes para os filtros atuais. Tente outra busca ou selecione uma categoria diferente."
+          actionHref="/oracoes"
+          actionLabel="Limpar filtros"
+          icon={HandHeart}
+        />
       )}
+
+      <CollectionPagination
+        pathname="/oracoes"
+        currentPage={safeCurrentPage}
+        totalPages={totalPages}
+        params={{ q: params.q, categoria }}
+      />
     </div>
-  );
-} 
+  )
+}

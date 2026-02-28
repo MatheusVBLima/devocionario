@@ -1,37 +1,65 @@
-import { HeroSection } from "@/components/sections/HeroSection";
-import { FeaturesSection } from "@/components/sections/FeaturesSection";
-import { PartnersSection } from "@/components/sections/PartnersSection";
-import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
-import { FAQSection } from "@/components/sections/FAQSection";
-import { Separator } from "@/components/ui/separator";
+import type { Metadata } from "next"
 
-// Componente ReviewCard para as avaliações
-function ReviewCard({ name, text, stars = 5 }: { name: string; text: string; stars?: number }) {
-  return (
-    <div className="mx-4 p-4 border rounded-lg min-w-80 group-hover:pause">
-      <div className="flex items-center mb-2">
-        <span className="text-yellow-400 text-xl">{Array(stars).fill('★').join('')}</span>
-      </div>
-      <p className="italic text-muted-foreground">{text}</p>
-      <p className="font-semibold mt-2">- {name}</p>
-    </div>
-  );
-}
+import { FAQSection } from "@/components/sections/FAQSection"
+import { FeaturesSection } from "@/components/sections/FeaturesSection"
+import { HeroSection } from "@/components/sections/HeroSection"
+import { PartnersSection } from "@/components/sections/PartnersSection"
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection"
+import { JsonLd } from "@/components/JsonLd"
+import { homeFaqItems } from "@/data/home"
+import { buildMetadata } from "@/lib/seo"
+import { canonicalUrl } from "@/lib/routes"
+
+export const metadata: Metadata = buildMetadata({
+  title: "Portal católico para oração, liturgia e formação",
+  description:
+    "Devocionário reúne orações, liturgia diária, santos e conteúdos católicos com leitura clara em qualquer tela.",
+  pathname: "/",
+})
 
 export default function Home() {
-  
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Devocionário",
+    url: canonicalUrl("/"),
+    inLanguage: "pt-BR",
+  }
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Devocionário",
+    url: canonicalUrl("/"),
+    logo: canonicalUrl("/logo.svg"),
+  }
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: homeFaqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  }
 
   return (
-    <div className="w-full relative flex flex-col ">
-      <section className="w-full"><HeroSection /></section>
-      <Separator />
-      <section className="w-full"><FeaturesSection /></section>
-      <Separator />
-      <section className="w-full"><PartnersSection /></section>
-      <Separator />
-      <section className="w-full"><TestimonialsSection /></section>
-      <Separator />
-      <section className="w-full"><FAQSection /></section>
-    </div>
-  );
+    <>
+      <JsonLd data={websiteSchema} />
+      <JsonLd data={organizationSchema} />
+      <JsonLd data={faqSchema} />
+
+      <div className="relative flex w-full flex-col pb-8">
+        <HeroSection />
+        <FeaturesSection />
+        <PartnersSection />
+        <TestimonialsSection />
+        <FAQSection />
+      </div>
+    </>
+  )
 }

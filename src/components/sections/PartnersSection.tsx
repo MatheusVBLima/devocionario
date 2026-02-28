@@ -1,61 +1,42 @@
-import { Wrapper } from "@/components/utils/Wrapper";
-import { AnimationContainer } from "@/components/utils/AnimationContainer";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Image from "next/image"
 
-interface Partner {
-  name: string;
-  description: string;
-  image: string;
-}
+import { homePartners } from "@/data/home"
+import { Wrapper } from "@/components/utils/Wrapper"
 
 export function PartnersSection() {
-  const partnersData: Partner[] = [
-    {
-      name: "Paróquia São Pedro",
-      description: "Comunidade católica parceira do Devocionário",
-      image: "/amigo-1.avif"
-    },
-    {
-      name: "Diocese de São Paulo",
-      description: "Apoiadores oficiais de nosso trabalho",
-      image: "/amigo-2.avif"
-    },
-    {
-      name: "Editora Católica",
-      description: "Parceiros na evangelização digital",
-      image: "/amigo-3.avif"
-    },
-    {
-      name: "Congregação Mariana",
-      description: "Apoio espiritual e formação católica",
-      image: "/amigo-4.avif"
-    }
-  ];
-
   return (
-    <section className="w-full py-20">
-      <Wrapper className="py-20 lg:py-32">
-        <AnimationContainer animation="fadeUp" delay={0.2}>
-          <h2 className="text-3xl font-bold text-center mb-12">Nossos Amigos</h2>
-        </AnimationContainer>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {partnersData.map((partner, index) => (
-            <AnimationContainer key={partner.name} animation="fadeUp" delay={0.4 + index * 0.1}>
-              <div className="text-center">
-              <Avatar className="size-26 mx-auto">
-                <AvatarImage src={partner.image} alt={partner.name} />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-                <h3 className="text-xl font-semibold mb-2">{partner.name}</h3>
-                <p className="text-muted-foreground">
-                  {partner.description}
-                </p>
+    <section className="home-section">
+      <Wrapper className="space-y-10">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
+          <span className="section-kicker">Rede de apoio</span>
+          <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+            Comunidades e iniciativas que fortalecem a presença católica no ambiente digital.
+          </h2>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {homePartners.map((partner) => (
+            <article
+              key={partner.name}
+              className="flex h-full flex-col items-center gap-4 rounded-[1.75rem] border border-border/70 bg-card/75 px-6 py-8 text-center"
+            >
+              <div className="relative size-24 overflow-hidden rounded-full border border-border/70 bg-muted">
+                <Image
+                  src={partner.image}
+                  alt={partner.name}
+                  fill
+                  className="object-cover"
+                  sizes="96px"
+                />
               </div>
-            </AnimationContainer>
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">{partner.name}</h3>
+                <p className="text-sm leading-7 text-muted-foreground">{partner.description}</p>
+              </div>
+            </article>
           ))}
         </div>
       </Wrapper>
     </section>
-  );
-} 
+  )
+}

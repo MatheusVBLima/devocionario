@@ -7,9 +7,10 @@ interface SantoImageProps {
   src: string;
   alt: string;
   className?: string;
+  sizes?: string;
 }
 
-export function SantoImage({ src, alt, className }: SantoImageProps) {
+export function SantoImage({ src, alt, className, sizes }: SantoImageProps) {
   const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
 
@@ -26,8 +27,8 @@ export function SantoImage({ src, alt, className }: SantoImageProps) {
       alt={alt}
       fill
       className={className || "object-cover rounded-lg"}
+      sizes={sizes ?? "(max-width: 1024px) 100vw, 33vw"}
       onError={handleError}
-      priority
     />
   );
 } 

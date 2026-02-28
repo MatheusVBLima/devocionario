@@ -1,20 +1,16 @@
-import React from "react"
+import type { ReactNode } from "react"
+
 import { cn } from "@/lib/utils"
 
-interface Props {
+type Props = {
   className?: string
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function Wrapper({ className, children }: Props) {
   return (
-    <section
-      className={cn(
-        "h-full mx-auto w-full lg:max-w-screen-xl px-4 lg:px-20",
-        className
-      )}
-    >
+    <div className={cn("mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-10", className)}>
       {children}
-    </section>
+    </div>
   )
 }

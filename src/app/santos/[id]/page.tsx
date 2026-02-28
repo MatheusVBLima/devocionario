@@ -1,100 +1,140 @@
-import { santos } from "@/data/santos";
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import { BreadcrumbNav } from "@/components/BreadcrumbNav";
-import { SantoImage } from "@/components/SantoImage";
+import type { Metadata } from "next"
+import Image from "next/image"
+import Link from "next/link"
+import { notFound } from "next/navigation"
 
-export default async function SantoPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const santoId = parseInt(id);
-  const santo = santos.find(s => s.id === santoId);
-  
+import { BreadcrumbNav } from "@/components/BreadcrumbNav"
+import { JsonLd } from "@/components/JsonLd"
+import { SantoImage } from "@/components/SantoImage"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { santos } from "@/data/santos"
+import { canonicalUrl } from "@/lib/routes"
+import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo"
+
+type SantoPageProps = {
+  params: Promise<{ id: string }>
+}
+
+const monthNames = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+]
+
+function formatDate(dia: string, mes: string) {
+  return `${Number(dia)} de ${monthNames[Number(mes) - 1]}`
+}
+
+export function generateStaticParams() {
+  return santos.map((santo) => ({
+    id: String(santo.id),
+  }))
+}
+
+export async function generateMetadata({
+  params,
+}: SantoPageProps): Promise<Metadata> {
+  const { id } = await params
+  const santo = santos.find((item) => item.id === Number(id))
+
   if (!santo) {
-    notFound();
+    return buildMetadata({
+      title: "Santo não encontrado",
+      description: "O santo solicitado não foi encontrado.",
+      pathname: `/santos/${id}`,
+    })
   }
-  
-  const formatarData = (dia: string, mes: string) => {
-    const meses = [
-      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-    ];
-    const mesIndex = parseInt(mes) - 1;
-    return `${parseInt(dia)} de ${meses[mesIndex]}`;
-  };
+
+  return buildMetadata({
+    title: santo.nome,
+    description: santo.sobre.slice(0, 160),
+    pathname: `/santos/${santo.id}`,
+    imagePath: `/santos/${santo.id}/opengraph-image`,
+  })
+}
+
+export default async function SantoPage({ params }: SantoPageProps) {
+  const { id } = await params
+  const santo = santos.find((item) => item.id === Number(id))
+
+  if (!santo) notFound()
 
   const breadcrumbItems = [
     { label: "Calendário de Santos", href: "/santos" },
     { label: santo.nome, href: `/santos/${santo.id}` },
-  ];
+  ]
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Início", url: canonicalUrl("/") },
+    { name: "Santos", url: canonicalUrl("/santos") },
+    { name: santo.nome, url: canonicalUrl(`/santos/${santo.id}`) },
+  ])
 
   return (
-    <div className="container mx-auto px-4 py-20 lg:py-32">
-      <BreadcrumbNav items={breadcrumbItems}/>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="relative h-[300px] lg:h-full rounded-lg overflow-hidden">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
+      <JsonLd data={breadcrumbSchema} />
+      <BreadcrumbNav items={breadcrumbItems} />
+
+      <div className="grid gap-8 lg:grid-cols-[1.05fr_1.4fr]">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-border/70 bg-muted">
           {santo.imagem ? (
-            <SantoImage 
-              src={santo.imagem} 
-              alt={santo.nome} 
-              className="object-cover rounded-lg" 
+            <SantoImage
+              src={santo.imagem}
+              alt={santo.nome}
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 40vw"
             />
           ) : (
             <Image
-              src="/placeholder.svg?height=600&width=400"
+              src="/placeholder.svg"
               alt={santo.nome}
               fill
-              className="object-cover rounded-lg bg-muted"
-              priority
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 40vw"
             />
           )}
         </div>
-        
-        <div className="lg:col-span-2">
-          <Badge variant="outline" className="mb-2">
-            {formatarData(santo.dia, santo.mes)}
+
+        <div className="flex flex-col gap-6">
+          <Badge variant="outline" className="w-fit">
+            {formatDate(santo.dia, santo.mes)}
           </Badge>
-          
-          <h1 className="text-4xl font-bold text-primary mb-4">{santo.nome}</h1>
-          
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-3">Sobre</h2>
-            <div className="prose prose-lg dark:prose-invert max-w-none">
-              <p>{santo.sobre}</p>
-            </div>
-          </div>
-          
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-3">Oração</h2>
-            <blockquote className="border-l-4 border-primary p-4 bg-muted/50 rounded-r-lg italic">
-              <p className="text-lg text-muted-foreground">{santo.oracao}</p>
+          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            {santo.nome}
+          </h1>
+
+          <section className="space-y-3">
+            <h2 className="text-2xl font-semibold">Sobre</h2>
+            <p className="text-base leading-8 text-muted-foreground">{santo.sobre}</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-2xl font-semibold">Oração</h2>
+            <blockquote className="rounded-3xl border-l-4 border-primary bg-muted/50 px-5 py-4 text-base italic leading-8 text-muted-foreground">
+              {santo.oracao}
             </blockquote>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div className="bg-muted/50 p-4 rounded-lg">
-              <h3 className="font-semibold mb-1">Data de celebração</h3>
-              <p>{formatarData(santo.dia, santo.mes)}</p>
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap gap-4">
+          </section>
+
+          <div className="flex flex-wrap gap-3">
             <Button asChild>
-              <Link href={`/rotina`}>
-                Ver Rotina Católica
-              </Link>
+              <Link href="/rotina">Ver rotina católica</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/santos">
-                Ver todos os Santos
-              </Link>
+              <Link href="/santos">Ver todos os santos</Link>
             </Button>
           </div>
         </div>
       </div>
     </div>
-  );
-} 
+  )
+}

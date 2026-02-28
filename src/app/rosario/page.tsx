@@ -1,99 +1,69 @@
-import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import type { Metadata } from "next"
+import Link from "next/link"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { rosarioMysteries } from "@/data/rosario"
+import { buildMetadata } from "@/lib/seo"
+
+export const metadata: Metadata = buildMetadata({
+  title: "Santo Rosário",
+  description:
+    "Reze o Santo Rosário com acesso aos mistérios gloriosos, dolorosos, gozosos e luminosos.",
+  pathname: "/rosario",
+})
 
 export default function RosarioPage() {
-  const misterios = [
-    {
-      id: 'gloriosos',
-      nome: 'Mistérios Gloriosos',
-      descricao: 'Celebram a vitória de Jesus sobre a morte e a glorificação de Nossa Senhora.',
-      dias: 'Quartas e Domingos',
-      misteriosDetalhados: [
-        'A Ressurreição de Jesus',
-        'A Ascensão de Jesus ao Céu',
-        'A Vinda do Espírito Santo',
-        'A Assunção de Nossa Senhora',
-        'A Coroação de Nossa Senhora'
-      ]
-    },
-    {
-      id: 'dolorosos',
-      nome: 'Mistérios Dolorosos',
-      descricao: 'Meditam os sofrimentos de Jesus durante sua Paixão.',
-      dias: 'Terças e Sextas',
-      misteriosDetalhados: [
-        'A Agonia de Jesus no Horto',
-        'A Flagelação de Jesus',
-        'A Coroação de Espinhos',
-        'Jesus carrega a Cruz',
-        'A Crucificação e Morte de Jesus'
-      ]
-    },
-    {
-      id: 'gozosos',
-      nome: 'Mistérios Gozosos',
-      descricao: 'Contemplam a alegria da encarnação e infância de Jesus.',
-      dias: 'Segundos e Sábados',
-      misteriosDetalhados: [
-        'A Anunciação do Anjo a Nossa Senhora',
-        'A Visitação de Nossa Senhora a Isabel',
-        'O Nascimento de Jesus',
-        'A Apresentação de Jesus no Templo',
-        'O Encontro de Jesus no Templo'
-      ]
-    },
-    {
-      id: 'luminosos',
-      nome: 'Mistérios Luminosos',
-      descricao: 'Contemplam a vida pública de Jesus e seu ministério.',
-      dias: 'Quintas',
-      misteriosDetalhados: [
-        'O Batismo de Jesus no Jordão',
-        'As Bodas de Caná',
-        'O Anúncio do Reino de Deus',
-        'A Transfiguração de Jesus',
-        'A Instituição da Eucaristia'
-      ]
-    }
-  ];
-
   return (
-    <div className="container mx-auto px-8 py-20 lg:py-32">
-      <h1 className="text-4xl font-bold text-center mb-12 text-primary">Santo Rosário</h1>
-      <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-12 text-center">
-        O Santo Rosário é uma devoção tradicional da Igreja Católica que nos convida a meditar os mistérios da vida de Jesus e Maria. 
-        Escolha um dos mistérios abaixo para rezar o Rosário completo.
-      </p>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
-        {misterios.map((misterio) => (
-          <Card key={misterio.id} >
-            <CardHeader>
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-16 md:px-6 lg:px-10 lg:py-24">
+      <header className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs tracking-[0.18em] uppercase">
+          Devoção mariana
+        </Badge>
+        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+          Santo Rosário
+        </h1>
+        <p className="max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+          Escolha um conjunto de mistérios para rezar o rosário com guia, reflexões e orações.
+        </p>
+      </header>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {rosarioMysteries.map((misterio) => (
+          <Card key={misterio.id} className="flex h-full flex-col">
+            <CardHeader className="space-y-3">
               <CardTitle>{misterio.nome}</CardTitle>
               <CardDescription>{misterio.descricao}</CardDescription>
-              <p className="text-sm text-muted-foreground">Dias recomendados: {misterio.dias}</p>
+              <Badge variant="secondary" className="w-fit">
+                {misterio.dias}
+              </Badge>
             </CardHeader>
-            
-            <CardContent>
-              <h3 className="font-semibold mb-2">Os cinco mistérios:</h3>
-              <ol className="list-decimal pl-5 mb-6 space-y-1">
-                {misterio.misteriosDetalhados.map((item, index) => (
-                  <li key={index} className="text-muted-foreground">{item}</li>
+            <CardContent className="flex-1">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Os cinco mistérios
+              </h2>
+              <ol className="list-decimal space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+                {misterio.misteriosDetalhados.map((item) => (
+                  <li key={item.titulo}>{item.titulo}</li>
                 ))}
               </ol>
             </CardContent>
-            
             <CardFooter>
               <Button asChild>
-                <Link href={`/rosario/${misterio.id}`}>
-                  Rezar estes mistérios
-                </Link>
+                <Link href={`/rosario/${misterio.id}`}>Rezar estes mistérios</Link>
               </Button>
             </CardFooter>
           </Card>
         ))}
       </div>
     </div>
-  );
-} 
+  )
+}

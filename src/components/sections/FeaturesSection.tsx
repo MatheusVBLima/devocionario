@@ -1,77 +1,43 @@
-import Link from "next/link";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Wrapper } from "@/components/utils/Wrapper";
-import { AnimationContainer } from "@/components/utils/AnimationContainer";
-
-interface FeatureItem {
-  icon: string;
-  title: string;
-  description: string;
-  link: string;
-}
+import { PrefetchLink } from "@/components/PrefetchLink"
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { homeFeatures } from "@/data/home"
+import { Wrapper } from "@/components/utils/Wrapper"
 
 export function FeaturesSection() {
-
-  const featuresData: FeatureItem[] = [
-    {
-      icon: "✝️",
-      title: "Santo Rosário",
-      description: "Explore os mistérios Gloriosos, Gozosos, Luminosos e Dolorosos do Santo Rosário.",
-      link: "/rosario"
-    },
-    {
-      icon: "📖",
-      title: "Liturgia Diária",
-      description: "Acompanhe as leituras diárias com primeira leitura, salmo, segunda leitura e evangelho.",
-      link: "/liturgia"
-    },
-    {
-      icon: "🙏",
-      title: "Orações",
-      description: "Encontre diversas orações organizadas por categorias, em latim e português.",
-      link: "/oracoes"
-    },
-    {
-      icon: "📅",
-      title: "Rotina Católica",
-      description: "Conheça o santo do dia e inspirações para sua rotina de fé.",
-      link: "/rotina"
-    }
-  ];
-
   return (
- 
-      <Wrapper className="py-20 lg:py-32">
-        <AnimationContainer animation="fadeUp" delay={0.2}>
-          <h2 className="text-3xl font-bold text-center mb-12">Nossas Seções</h2>
-        </AnimationContainer>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuresData.map((feature, index) => (
-            <AnimationContainer key={feature.title} animation="fadeUp" delay={0.4 + index * 0.2}>
-              <Card className="flex flex-col h-full">
-                <CardHeader className="flex-grow">
-                  <div className="h-12 w-12 border rounded-full flex items-center justify-center mb-4">
-                    <span className="text-xl">{feature.icon}</span>
-                  </div>
-                  <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>
-                    {feature.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter className="mt-auto pt-2">
-                  <Button asChild variant="link" className="p-0 h-auto">
-                    <Link href={feature.link}>
-                      Ver mais →
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </AnimationContainer>
+    <section className="home-section">
+      <Wrapper className="space-y-10">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
+          <span className="section-kicker">Seções principais</span>
+          <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+            Tudo o que você precisa para organizar a leitura e a oração em um só lugar.
+          </h2>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {homeFeatures.map((feature) => (
+            <Card key={feature.title} className="flex h-full flex-col rounded-[1.75rem] border-border/70 bg-card/80">
+              <CardHeader className="flex-1 gap-4">
+                <div className="flex size-12 items-center justify-center rounded-2xl border border-border/70 bg-background text-xl">
+                  {feature.icon}
+                </div>
+                <CardTitle className="text-xl">{feature.title}</CardTitle>
+                <CardDescription className="text-sm leading-7">
+                  {feature.description}
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <PrefetchLink
+                  href={feature.href}
+                  className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                >
+                  Ver seção
+                </PrefetchLink>
+              </CardFooter>
+            </Card>
           ))}
         </div>
       </Wrapper>
-   
-  );
-} 
+    </section>
+  )
+}

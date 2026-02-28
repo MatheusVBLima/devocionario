@@ -1,48 +1,93 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import type { Metadata, Viewport } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+
+import Footer from "@/components/Footer"
+import Header from "@/components/Header"
+import { ThemeProvider } from "@/components/ThemeProvider"
+import { canonicalUrl } from "@/lib/routes"
+import { siteConfig } from "@/lib/site"
+import "./globals.css"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
+})
 
 export const metadata: Metadata = {
-  title: "Devocionário - Seu portal católico",
-  description: "Portal católico para orações, liturgia diária e conteúdo para sua vida espiritual",
-};
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  alternates: {
+    canonical: canonicalUrl("/"),
+  },
+  openGraph: {
+    type: "website",
+    locale: siteConfig.locale,
+    siteName: siteConfig.name,
+    url: canonicalUrl("/"),
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [
+      {
+        url: canonicalUrl(siteConfig.ogImage),
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [canonicalUrl(siteConfig.ogImage)],
+  },
+  category: "religion",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: siteConfig.themeColor,
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          
-          <main className="w-full relative">
+          <main className="relative flex min-h-screen w-full flex-col">
             <Header />
-            {children}
+            <div className="flex-1 pt-16 lg:pt-0">{children}</div>
             <Footer />
           </main>
-         
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

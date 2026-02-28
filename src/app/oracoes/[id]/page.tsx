@@ -1,39 +1,80 @@
-import { oracoes } from "@/data/oracoes";
-import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { OracaoContent } from "@/components/OracaoContent";
-import { BreadcrumbNav } from '@/components/BreadcrumbNav';
+import type { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
 
-export default async function OracaoPage({ 
-  params 
-}: { 
-  params: Promise<{ id: string }> 
-}) {
-  const { id } = await params;
-  const oracaoId = parseInt(id);
-  const oracao = oracoes.find(o => o.id === oracaoId);
-  
+import { BreadcrumbNav } from "@/components/BreadcrumbNav"
+import { JsonLd } from "@/components/JsonLd"
+import { OracaoContent } from "@/components/OracaoContent"
+import { Button } from "@/components/ui/button"
+import { oracoes } from "@/data/oracoes"
+import { canonicalUrl } from "@/lib/routes"
+import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo"
+
+type OracaoPageProps = {
+  params: Promise<{ id: string }>
+}
+
+function getOracaoDescription(content: string) {
+  return content.replace(/\*\*/g, "").replace(/\s+/g, " ").trim().slice(0, 160)
+}
+
+export function generateStaticParams() {
+  return oracoes.map((oracao) => ({
+    id: String(oracao.id),
+  }))
+}
+
+export async function generateMetadata({
+  params,
+}: OracaoPageProps): Promise<Metadata> {
+  const { id } = await params
+  const oracao = oracoes.find((item) => item.id === Number(id))
+
   if (!oracao) {
-    notFound();
+    return buildMetadata({
+      title: "Oração não encontrada",
+      description: "A oração solicitada não foi encontrada.",
+      pathname: `/oracoes/${id}`,
+    })
   }
+
+  return buildMetadata({
+    title: oracao.title,
+    description: getOracaoDescription(oracao.content),
+    pathname: `/oracoes/${oracao.id}`,
+    imagePath: `/oracoes/${oracao.id}/opengraph-image`,
+  })
+}
+
+export default async function OracaoPage({ params }: OracaoPageProps) {
+  const { id } = await params
+  const oracao = oracoes.find((item) => item.id === Number(id))
+
+  if (!oracao) notFound()
 
   const breadcrumbItems = [
     { label: "Orações", href: "/oracoes" },
     { label: oracao.title, href: `/oracoes/${oracao.id}` },
-  ];
+  ]
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Início", url: canonicalUrl("/") },
+    { name: "Orações", url: canonicalUrl("/oracoes") },
+    { name: oracao.title, url: canonicalUrl(`/oracoes/${oracao.id}`) },
+  ])
 
   return (
-    <div className="container mx-auto px-4 py-20 lg:py-32">
-     <BreadcrumbNav items={breadcrumbItems}/>
-      
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
+      <JsonLd data={breadcrumbSchema} />
+      <BreadcrumbNav items={breadcrumbItems} />
+
       <OracaoContent oracao={oracao} />
-      
-      <div className="mt-8 flex justify-center">
+
+      <div className="flex justify-center">
         <Button asChild variant="secondary">
           <Link href="/oracoes">Ver todas as orações</Link>
         </Button>
       </div>
     </div>
-  );
-} 
+  )
+}

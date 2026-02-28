@@ -1,59 +1,38 @@
-import { Wrapper } from "@/components/utils/Wrapper";
-import { AnimationContainer } from "@/components/utils/AnimationContainer";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-
-interface FAQItem {
-  question: string;
-  answer: string;
-  value: string;
-}
+} from "@/components/ui/accordion"
+import { homeFaqItems } from "@/data/home"
+import { Wrapper } from "@/components/utils/Wrapper"
 
 export function FAQSection() {
-  
-  const faqData: FAQItem[] = [
-    {
-      question: "Como posso rezar o Santo Rosário?",
-      answer: "Na seção do Santo Rosário, temos um guia completo sobre como rezar cada mistério, com todas as orações necessárias.",
-      value: "item-1"
-    },
-    {
-      question: "Como acompanho a liturgia diária?",
-      answer: "Nossa seção de Liturgia é atualizada diariamente com as leituras do dia, organizadas em abas para facilitar a leitura.",
-      value: "item-2"
-    },
-    {
-      question: "Posso contribuir com o site?",
-      answer: "Sim! Entre em contato conosco através do formulário no rodapé da página para saber como pode ajudar.",
-      value: "item-3"
-    }
-  ];
-
   return (
-    
-      <Wrapper className="py-20 lg:py-32">
-        <AnimationContainer animation="fadeUp" delay={0.2}>
-          <h2 className="text-3xl font-bold text-center mb-12">Perguntas Frequentes</h2>
-        </AnimationContainer>
-          <AnimationContainer animation="fadeUp" delay={0.4}>
-            <Accordion type="single" collapsible className="w-full">
-              {faqData.map((item) => (
-                <AccordionItem key={item.value} value={item.value}>
-                  <AccordionTrigger className="text-xl font-semibold">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </AnimationContainer>  
+    <section className="home-section">
+      <Wrapper className="space-y-10">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
+          <span className="section-kicker">Perguntas frequentes</span>
+          <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+            Respostas rápidas para começar a usar o conteúdo do site.
+          </h2>
+        </div>
+
+        <div className="mx-auto max-w-4xl rounded-[2rem] border border-border/70 bg-card/80 p-3 md:p-4">
+          <Accordion type="single" collapsible className="w-full">
+            {homeFaqItems.map((item) => (
+              <AccordionItem key={item.value} value={item.value}>
+                <AccordionTrigger className="text-left text-lg font-semibold">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-base leading-7 text-muted-foreground">
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
       </Wrapper>
-    
-  );
-} 
+    </section>
+  )
+}
