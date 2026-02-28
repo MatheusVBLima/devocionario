@@ -8,9 +8,9 @@ import { blogPosts } from "@/data/blog"
 import { buildMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = buildMetadata({
-  title: "Blog catolico",
+  title: "Blog católico",
   description:
-    "Acompanhe noticias, formacoes e conteudos sobre a vida da Igreja, espiritualidade e formacao catolica.",
+    "Acompanhe notícias, formações e conteúdos sobre a vida da Igreja, espiritualidade e formação católica.",
   pathname: "/blog",
 })
 
@@ -22,14 +22,14 @@ export default function BlogPage() {
           variant="secondary"
           className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
         >
-          Conteudo editorial
+          Conteúdo editorial
         </Badge>
         <h1 className="max-w-3xl text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
           Blog
         </h1>
         <div className="my-2 h-px w-12 bg-border/50" />
         <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-          Noticias, formacoes e reflexoes sobre a vida da Igreja, espiritualidade e cultura catolica.
+          Notícias, formações e reflexões sobre a vida da Igreja, espiritualidade e cultura católica.
         </p>
       </header>
 

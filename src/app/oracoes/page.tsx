@@ -8,9 +8,9 @@ import { oracoes } from "@/data/oracoes"
 import { buildMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = buildMetadata({
-  title: "Oracoes catolicas",
+  title: "Orações católicas",
   description:
-    "Consulte oracoes catolicas por categoria, com leitura organizada e acesso rapido para diferentes momentos da vida espiritual.",
+    "Consulte orações católicas por categoria, com leitura organizada e acesso rápido para diferentes momentos da vida espiritual.",
   pathname: "/oracoes",
 })
 
@@ -22,14 +22,14 @@ export default function OracoesPage() {
           variant="secondary"
           className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
         >
-          Vida de oracao
+          Vida de oração
         </Badge>
         <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
-          Oracoes
+          Orações
         </h1>
         <div className="my-2 h-px w-12 bg-border/50" />
         <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-          Uma colecao de oracoes catolicas organizadas por tema, para leitura simples e acesso rapido.
+          Uma coleção de orações católicas organizadas por tema, para leitura simples e acesso rápido.
         </p>
       </header>
 

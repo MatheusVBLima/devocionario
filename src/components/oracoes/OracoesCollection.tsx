@@ -68,7 +68,7 @@ export function OracoesCollection({ oracoes }: OracoesCollectionProps) {
   return (
     <>
       <CollectionFilters
-        searchPlaceholder="Pesquisar oracoes..."
+        searchPlaceholder="Pesquisar orações..."
         searchValue={filters.q}
         onSearchChange={(value) => {
           void setFilters(
@@ -142,7 +142,7 @@ export function OracoesCollection({ oracoes }: OracoesCollectionProps) {
               </CardContent>
               <CardFooter className="px-6 pb-6">
                 <Button asChild className="w-full">
-                  <Link href={`/oracoes/${oracao.id}`}>Ver oracao</Link>
+                  <Link href={`/oracoes/${oracao.id}`}>Ver oração</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -150,8 +150,8 @@ export function OracoesCollection({ oracoes }: OracoesCollectionProps) {
         </div>
       ) : (
         <AppEmptyState
-          title="Nenhuma oracao encontrada"
-          description="Nao encontramos oracoes para os filtros atuais. Tente outra busca ou selecione uma categoria diferente."
+          title="Nenhuma oração encontrada"
+          description="Não encontramos orações para os filtros atuais. Tente outra busca ou selecione uma categoria diferente."
           actionHref="/oracoes"
           actionLabel="Limpar filtros"
           icon={HandHeart}

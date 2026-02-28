@@ -11,7 +11,7 @@ const months = [
   { value: "Todos", label: "Todos os meses" },
   { value: "01", label: "Janeiro" },
   { value: "02", label: "Fevereiro" },
-  { value: "03", label: "Marco" },
+  { value: "03", label: "Março" },
   { value: "04", label: "Abril" },
   { value: "05", label: "Maio" },
   { value: "06", label: "Junho" },
@@ -24,9 +24,9 @@ const months = [
 ] as const
 
 export const metadata: Metadata = buildMetadata({
-  title: "Calendario dos santos",
+  title: "Calendário dos santos",
   description:
-    "Navegue pelo calendario dos santos, com datas de celebracao, biografias resumidas e oracoes de devocao.",
+    "Navegue pelo calendário dos santos, com datas de celebração, biografias resumidas e orações de devoção.",
   pathname: "/santos",
 })
 
@@ -38,14 +38,14 @@ export default function SantosPage() {
           variant="secondary"
           className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
         >
-          Calendario liturgico
+          Calendário litúrgico
         </Badge>
         <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
-          Calendario dos Santos
+          Calendário dos Santos
         </h1>
         <div className="my-2 h-px w-12 bg-border/50" />
         <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-          Conheca os santos celebrados ao longo do ano com acesso rapido a biografias e oracoes.
+          Conheça os santos celebrados ao longo do ano com acesso rápido a biografias e orações.
         </p>
       </header>
 

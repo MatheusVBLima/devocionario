@@ -134,7 +134,7 @@ export function BlogCollection({ posts }: BlogCollectionProps) {
       ) : (
         <AppEmptyState
           title="Nenhum artigo encontrado"
-          description="Nao encontramos artigos para os filtros atuais do blog. Ajuste a pesquisa ou escolha outra categoria."
+          description="Não encontramos artigos para os filtros atuais do blog. Ajuste a pesquisa ou escolha outra categoria."
           actionHref="/blog"
           actionLabel="Limpar filtros"
           icon={Newspaper}

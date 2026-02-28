@@ -149,7 +149,7 @@ export function SantosCollection({ santos, months }: SantosCollectionProps) {
       ) : (
         <AppEmptyState
           title="Nenhum santo encontrado"
-          description="Nao encontramos santos para os filtros atuais. Tente outro nome ou selecione um mes diferente."
+          description="Não encontramos santos para os filtros atuais. Tente outro nome ou selecione um mês diferente."
           actionHref="/santos"
           actionLabel="Limpar filtros"
           icon={Church}
