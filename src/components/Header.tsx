@@ -79,7 +79,7 @@ export default function Header() {
           <div className="flex min-w-0 items-center justify-center gap-x-1 text-sm font-medium text-muted-foreground">
             <AnimatePresence>
               {navLinks.map((link, index) => {
-                const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                const isActive = pathname === link.href || ((link.href as string) !== '/' && pathname.startsWith(link.href))
                 
                 return (
                   <AnimationContainer
@@ -146,7 +146,7 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 {navLinks.map((link) => {
-                  const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                  const isActive = pathname === link.href || ((link.href as string) !== '/' && pathname.startsWith(link.href))
                   
                   return (
                     <DropdownMenuItem 
