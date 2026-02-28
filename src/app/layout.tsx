@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
@@ -75,18 +76,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <main className="relative flex min-h-screen w-full flex-col">
-            <Header />
-            <div className="flex-1 pt-16 lg:pt-0">{children}</div>
-            <Footer />
-          </main>
-        </ThemeProvider>
+        <NuqsAdapter>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main className="relative flex min-h-screen w-full flex-col">
+              <Header />
+              <div className="flex-1 pt-16 lg:pt-0">{children}</div>
+              <Footer />
+            </main>
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   )

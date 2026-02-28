@@ -117,8 +117,8 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
             <SelectItem value="salmo">Salmo</SelectItem>
             <SelectItem value="segunda">Segunda leitura</SelectItem>
             <SelectItem value="evangelho">Evangelho</SelectItem>
-            <SelectItem value="oracoes">Oracoes</SelectItem>
-            <SelectItem value="antifonas">Antifonas</SelectItem>
+            <SelectItem value="oracoes">Orações</SelectItem>
+            <SelectItem value="antifonas">Antífonas</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -128,8 +128,8 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
         <TabsTrigger value="salmo">Salmo</TabsTrigger>
         <TabsTrigger value="segunda">Segunda leitura</TabsTrigger>
         <TabsTrigger value="evangelho">Evangelho</TabsTrigger>
-        <TabsTrigger value="oracoes">Oracoes</TabsTrigger>
-        <TabsTrigger value="antifonas">Antifonas</TabsTrigger>
+        <TabsTrigger value="oracoes">Orações</TabsTrigger>
+        <TabsTrigger value="antifonas">Antífonas</TabsTrigger>
       </TabsList>
 
       <TabsContent value="primeira">
@@ -140,13 +140,13 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
             text={primeiraLeitura.texto}
             response={{
               primary: "Palavra do Senhor.",
-              secondary: "Gracas a Deus.",
+              secondary: "Graças a Deus.",
             }}
           />
         ) : (
           <AppEmptyState
-            title="Primeira leitura indisponivel"
-            description="A primeira leitura nao esta disponivel na liturgia de hoje."
+            title="Primeira leitura indisponível"
+            description="A primeira leitura não está disponível na liturgia de hoje."
             className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
@@ -161,8 +161,8 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
           />
         ) : (
           <AppEmptyState
-            title="Salmo indisponivel"
-            description="O salmo nao esta disponivel na liturgia de hoje."
+            title="Salmo indisponível"
+            description="O salmo não está disponível na liturgia de hoje."
             className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
@@ -176,13 +176,13 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
             text={segundaLeitura.texto}
             response={{
               primary: "Palavra do Senhor.",
-              secondary: "Gracas a Deus.",
+              secondary: "Graças a Deus.",
             }}
           />
         ) : (
           <AppEmptyState
-            title="Segunda leitura indisponivel"
-            description="A segunda leitura nao esta disponivel na liturgia de hoje."
+            title="Segunda leitura indisponível"
+            description="A segunda leitura não está disponível na liturgia de hoje."
             className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
@@ -195,14 +195,14 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
             description={evangelho.titulo}
             text={evangelho.texto}
             response={{
-              primary: "Palavra da Salvacao.",
-              secondary: "Gloria a vos, Senhor.",
+              primary: "Palavra da Salvação.",
+              secondary: "Glória a vós, Senhor.",
             }}
           />
         ) : (
           <AppEmptyState
-            title="Evangelho indisponivel"
-            description="O evangelho nao esta disponivel na liturgia de hoje."
+            title="Evangelho indisponível"
+            description="O evangelho não está disponível na liturgia de hoje."
             className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
@@ -260,8 +260,8 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
           </div>
         ) : (
           <AppEmptyState
-            title="Oracoes indisponiveis"
-            description="As oracoes desta celebracao nao estao disponiveis na liturgia de hoje."
+            title="Orações indisponíveis"
+            description="As orações desta celebração não estão disponíveis na liturgia de hoje."
             className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
@@ -297,8 +297,8 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
           </div>
         ) : (
           <AppEmptyState
-            title="Antifonas indisponiveis"
-            description="As antifonas desta celebracao nao estao disponiveis na liturgia de hoje."
+            title="Antífonas indisponíveis"
+            description="As antífonas desta celebração não estão disponíveis na liturgia de hoje."
             className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}

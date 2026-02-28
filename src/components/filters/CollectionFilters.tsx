@@ -1,8 +1,5 @@
 "use client"
 
-import { useEffect, useRef, useState, useTransition } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -11,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { buildSearchHref } from "@/lib/routes"
 
 type FilterOption = {
   label: string
@@ -20,70 +16,38 @@ type FilterOption = {
 
 type CollectionFiltersProps = {
   searchPlaceholder: string
-  searchParamKey?: string
-  selectParamKey: string
+  searchValue: string
+  onSearchChange: (value: string) => void
+  selectValue: string
+  onSelectChange: (value: string) => void
   selectPlaceholder: string
   selectOptions: FilterOption[]
+  isPending?: boolean
 }
 
 export function CollectionFilters({
   searchPlaceholder,
-  searchParamKey = "q",
-  selectParamKey,
+  searchValue,
+  onSearchChange,
+  selectValue,
+  onSelectChange,
   selectPlaceholder,
   selectOptions,
+  isPending = false,
 }: CollectionFiltersProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [isPending, startTransition] = useTransition()
-  const hasMountedRef = useRef(false)
-  const [searchValue, setSearchValue] = useState(searchParams.get(searchParamKey) ?? "")
-  const [selectedValue, setSelectedValue] = useState(
-    searchParams.get(selectParamKey) ?? selectOptions[0]?.value ?? "",
-  )
-
-  useEffect(() => {
-    setSearchValue(searchParams.get(searchParamKey) ?? "")
-    setSelectedValue(searchParams.get(selectParamKey) ?? selectOptions[0]?.value ?? "")
-  }, [searchParamKey, searchParams, selectOptions, selectParamKey])
-
-  useEffect(() => {
-    if (!hasMountedRef.current) {
-      hasMountedRef.current = true
-      return
-    }
-
-    const handle = window.setTimeout(() => {
-      const href = buildSearchHref(pathname, {
-        [searchParamKey]: searchValue,
-        [selectParamKey]: selectedValue,
-      })
-
-      startTransition(() => {
-        router.push(href, { scroll: false })
-      })
-    }, 250)
-
-    return () => window.clearTimeout(handle)
-  }, [pathname, router, searchValue, searchParamKey, selectedValue, selectParamKey])
-
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div className="w-full max-w-xl">
         <Input
           value={searchValue}
           placeholder={searchPlaceholder}
-          onChange={(event) => setSearchValue(event.target.value)}
+          onChange={(event) => onSearchChange(event.target.value)}
           aria-busy={isPending}
         />
       </div>
 
       <div className="w-full md:w-[260px]">
-        <Select
-          value={selectedValue}
-          onValueChange={(value) => setSelectedValue(value)}
-        >
+        <Select value={selectValue} onValueChange={onSelectChange}>
           <SelectTrigger aria-label={selectPlaceholder}>
             <SelectValue placeholder={selectPlaceholder} />
           </SelectTrigger>

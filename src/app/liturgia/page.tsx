@@ -9,9 +9,9 @@ import { buildMetadata } from "@/lib/seo"
 export const revalidate = 3600
 
 export const metadata: Metadata = buildMetadata({
-  title: "Liturgia diaria",
+  title: "Liturgia diária",
   description:
-    "Acompanhe as leituras, salmo, evangelho, oracoes e antifonas da liturgia diaria.",
+    "Acompanhe as leituras, salmo, evangelho, orações e antífonas da liturgia diária.",
   pathname: "/liturgia",
 })
 
@@ -72,7 +72,7 @@ function formatDate(dateString: string) {
   const months = [
     "Janeiro",
     "Fevereiro",
-    "Marco",
+    "Março",
     "Abril",
     "Maio",
     "Junho",
@@ -106,7 +106,7 @@ export default async function LiturgiaPage() {
           Leitura do dia
         </Badge>
         <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
-          Liturgia Diaria
+          Liturgia Diária
         </h1>
         <div className="my-2 h-px w-12 bg-border/50" />
 
@@ -116,12 +116,12 @@ export default async function LiturgiaPage() {
               {formatDate(liturgia.data)} • {getWeekday(liturgia.data)}
             </p>
             <p className="max-w-2xl text-pretty text-lg italic leading-8 text-muted-foreground">
-              {liturgia.liturgia} • Cor liturgica: {liturgia.cor}
+              {liturgia.liturgia} • Cor litúrgica: {liturgia.cor}
             </p>
           </div>
         ) : (
           <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-            Acompanhe as leituras, o salmo e as oracoes do dia em uma interface pensada para leitura.
+            Acompanhe as leituras, o salmo e as orações do dia em uma interface pensada para leitura.
           </p>
         )}
       </header>
@@ -130,8 +130,8 @@ export default async function LiturgiaPage() {
         <LiturgiaTabs liturgia={liturgia} />
       ) : (
         <AppEmptyState
-          title="Liturgia indisponivel no momento"
-          description="Nao foi possivel carregar o conteudo da liturgia diaria agora. Tente novamente em instantes."
+          title="Liturgia indisponível no momento"
+          description="Não foi possível carregar o conteúdo da liturgia diária agora. Tente novamente em instantes."
           actionHref="/liturgia"
           actionLabel="Tentar novamente"
           icon={BookMarked}

@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Pagination,
   PaginationContent,
@@ -7,35 +9,38 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { buildSearchHref } from "@/lib/routes"
 import { getPaginationItems } from "@/lib/pagination"
 
 type CollectionPaginationProps = {
-  pathname: string
   currentPage: number
   totalPages: number
-  params: Record<string, string | number | undefined | null>
+  onPageChange: (page: number) => void
 }
 
 export function CollectionPagination({
-  pathname,
   currentPage,
   totalPages,
-  params,
+  onPageChange,
 }: CollectionPaginationProps) {
   if (totalPages <= 1) return null
 
   const items = getPaginationItems(currentPage, totalPages)
+
+  function handlePageChange(page: number) {
+    if (page === currentPage || page < 1 || page > totalPages) return
+    onPageChange(page)
+  }
 
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            href={buildSearchHref(pathname, {
-              ...params,
-              page: Math.max(currentPage - 1, 1),
-            })}
+            href="#"
+            onClick={(event) => {
+              event.preventDefault()
+              handlePageChange(Math.max(currentPage - 1, 1))
+            }}
             className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined}
           />
         </PaginationItem>
@@ -46,8 +51,12 @@ export function CollectionPagination({
               <PaginationEllipsis />
             ) : (
               <PaginationLink
-                href={buildSearchHref(pathname, { ...params, page: item })}
+                href="#"
                 isActive={item === currentPage}
+                onClick={(event) => {
+                  event.preventDefault()
+                  handlePageChange(item)
+                }}
               >
                 {item}
               </PaginationLink>
@@ -57,10 +66,11 @@ export function CollectionPagination({
 
         <PaginationItem>
           <PaginationNext
-            href={buildSearchHref(pathname, {
-              ...params,
-              page: Math.min(currentPage + 1, totalPages),
-            })}
+            href="#"
+            onClick={(event) => {
+              event.preventDefault()
+              handlePageChange(Math.min(currentPage + 1, totalPages))
+            }}
             className={
               currentPage === totalPages ? "pointer-events-none opacity-50" : undefined
             }
