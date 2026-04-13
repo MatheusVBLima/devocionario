@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
+import { Analytics } from "@vercel/analytics/next"
 
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
@@ -90,6 +91,7 @@ export default function RootLayout({
             </main>
           </ThemeProvider>
         </NuqsAdapter>
+        <Analytics />
       </body>
     </html>
   )
