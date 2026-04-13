@@ -396,9 +396,14 @@ const fetchRemoteBlogPosts = cache(async () => {
   const directusToken = process.env.DIRECTUS_TOKEN
   const collection = process.env.DIRECTUS_ARTICLES_COLLECTION ?? "Artigos"
 
-  if (!directusUrl || !directusToken) return null
+  if (!directusUrl || !directusToken) {
+    console.warn("[blog] DIRECTUS_URL ou DIRECTUS_TOKEN não definidos — usando fallback.")
+    return null
+  }
 
   const endpoint = `${directusUrl}/items/${collection}`
+  console.log(`[blog] Buscando artigos em: ${endpoint}`)
+
   const response = await fetch(endpoint, {
     headers: {
       Authorization: `Bearer ${directusToken}`,
@@ -408,7 +413,7 @@ const fetchRemoteBlogPosts = cache(async () => {
   })
 
   if (!response.ok) {
-    throw new Error(`Falha ao carregar artigos remotos: ${response.status}`)
+    throw new Error(`Falha ao carregar artigos remotos: HTTP ${response.status} ${response.statusText} — ${endpoint}`)
   }
 
   const payload = (await response.json()) as { data?: unknown }
