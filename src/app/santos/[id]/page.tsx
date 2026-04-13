@@ -10,7 +10,12 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { santos } from "@/data/santos"
 import { canonicalUrl } from "@/lib/routes"
-import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo"
+import {
+  buildBreadcrumbSchema,
+  buildMetadata,
+  buildProfilePageSchema,
+  normalizeDescription,
+} from "@/lib/seo"
 
 type SantoPageProps = {
   params: Promise<{ id: string }>
@@ -57,9 +62,11 @@ export async function generateMetadata({
 
   return buildMetadata({
     title: santo.nome,
-    description: santo.sobre.slice(0, 160),
+    description: normalizeDescription(santo.sobre),
     pathname: `/santos/${santo.id}`,
     imagePath: `/santos/${santo.id}/opengraph-image`,
+    keywords: [santo.nome, "santos", "calendário dos santos", "oração"],
+    section: "santos",
   })
 }
 
@@ -79,10 +86,17 @@ export default async function SantoPage({ params }: SantoPageProps) {
     { name: "Santos", url: canonicalUrl("/santos") },
     { name: santo.nome, url: canonicalUrl(`/santos/${santo.id}`) },
   ])
+  const profileSchema = buildProfilePageSchema({
+    title: santo.nome,
+    description: santo.sobre,
+    pathname: `/santos/${santo.id}`,
+    imagePath: `/santos/${santo.id}/opengraph-image`,
+  })
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={profileSchema} />
       <BreadcrumbNav items={breadcrumbItems} />
 
       <div className="grid gap-8 lg:grid-cols-[1.05fr_1.4fr]">

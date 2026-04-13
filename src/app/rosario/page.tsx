@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
+import { JsonLd } from "@/components/JsonLd"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { rosarioMysteries } from "@/data/rosario"
-import { buildMetadata } from "@/lib/seo"
+import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = buildMetadata({
   title: "Santo Rosário",
@@ -14,8 +15,21 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default function RosarioPage() {
+  const pageSchema = buildCollectionPageSchema({
+    title: "Santo Rosário",
+    description:
+      "Reze o Santo Rosário com acesso aos mistérios gloriosos, dolorosos, gozosos e luminosos.",
+    pathname: "/rosario",
+    items: rosarioMysteries.map((misterio) => ({
+      name: misterio.nome,
+      pathname: `/rosario/${misterio.id}`,
+    })),
+  })
+
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <JsonLd data={pageSchema} />
+
       <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
         <Badge 
           variant="secondary" 

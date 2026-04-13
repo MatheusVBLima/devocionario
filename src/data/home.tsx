@@ -34,23 +34,27 @@ export const homeFeatures = [
 
 export const homePartners = [
   {
-    name: "Paróquia São Pedro",
-    description: "Comunidade católica parceira do Devocionário.",
+    name: "Padre Paulo Ricardo",
+    description:
+      "Padre Paulo Ricardo é um sacerdote católico, escritor e professor universitário brasileiro. Foi ordenado sacerdote no dia 14 de junho de 1992, pelo Papa João Paulo II.",
     image: "/amigo-1.avif",
   },
   {
-    name: "Diocese de São Paulo",
-    description: "Apoiadores institucionais do trabalho de evangelização digital.",
+    name: "Padre Leonardo Wagner",
+    description:
+      "Sacerdote católico dedicado à evangelização e formação espiritual. Com mais de 20 anos de ministério sacerdotal.",
     image: "/amigo-2.avif",
   },
   {
-    name: "Editora Católica",
-    description: "Parceiros na difusão de conteúdo formativo e espiritual.",
+    name: "Padre José Eduardo",
+    description:
+      "José Eduardo de Oliveira e Silva O.T.C é um sacerdote católico brasileiro, pároco da Paróquia São Domingos \"O Pregador\" em Osasco, professor e influencer, conhecido por sua atuação virtual.",
     image: "/amigo-3.avif",
   },
   {
-    name: "Congregação Mariana",
-    description: "Apoio pastoral e incentivo à formação da vida de oração.",
+    name: "Instituto do Verbo Encarnado",
+    description:
+      "Uma associação de leigos que buscam a perfeição cristã e compartilham missão e carisma com os membros do Instituto.",
     image: "/amigo-4.avif",
   },
 ] as const

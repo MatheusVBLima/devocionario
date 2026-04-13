@@ -2,10 +2,11 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 
 import { CollectionFallback } from "@/components/CollectionFallback"
+import { JsonLd } from "@/components/JsonLd"
 import { SantosCollection } from "@/components/santos/SantosCollection"
 import { Badge } from "@/components/ui/badge"
 import { santos } from "@/data/santos"
-import { buildMetadata } from "@/lib/seo"
+import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
 
 const months = [
   { value: "Todos", label: "Todos os meses" },
@@ -31,8 +32,21 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default function SantosPage() {
+  const pageSchema = buildCollectionPageSchema({
+    title: "Calendário dos santos",
+    description:
+      "Navegue pelo calendário dos santos, com datas de celebração, biografias resumidas e orações de devoção.",
+    pathname: "/santos",
+    items: santos.map((santo) => ({
+      name: santo.nome,
+      pathname: `/santos/${santo.id}`,
+    })),
+  })
+
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <JsonLd data={pageSchema} />
+
       <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
         <Badge
           variant="secondary"

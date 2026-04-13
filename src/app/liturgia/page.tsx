@@ -2,9 +2,10 @@ import type { Metadata } from "next"
 import { BookMarked } from "lucide-react"
 
 import { AppEmptyState } from "@/components/AppEmptyState"
+import { JsonLd } from "@/components/JsonLd"
 import { LiturgiaTabs } from "@/components/liturgia/LiturgiaTabs"
 import { Badge } from "@/components/ui/badge"
-import { buildMetadata } from "@/lib/seo"
+import { buildMetadata, buildWebPageSchema } from "@/lib/seo"
 
 export const revalidate = 3600
 
@@ -95,9 +96,17 @@ function getWeekday(dateString: string) {
 
 export default async function LiturgiaPage() {
   const liturgia = await getLiturgiaData()
+  const pageSchema = buildWebPageSchema({
+    title: "Liturgia diária",
+    description:
+      "Acompanhe as leituras, salmo, evangelho, orações e antífonas da liturgia diária.",
+    pathname: "/liturgia",
+  })
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-20 md:px-6 lg:py-32">
+      <JsonLd data={pageSchema} />
+
       <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
         <Badge 
           variant="secondary" 

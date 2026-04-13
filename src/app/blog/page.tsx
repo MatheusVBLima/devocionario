@@ -3,9 +3,10 @@ import { Suspense } from "react"
 
 import { BlogCollection } from "@/components/blog/BlogCollection"
 import { CollectionFallback } from "@/components/CollectionFallback"
+import { JsonLd } from "@/components/JsonLd"
 import { Badge } from "@/components/ui/badge"
 import { blogPosts } from "@/data/blog"
-import { buildMetadata } from "@/lib/seo"
+import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = buildMetadata({
   title: "Blog católico",
@@ -15,8 +16,21 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default function BlogPage() {
+  const pageSchema = buildCollectionPageSchema({
+    title: "Blog católico",
+    description:
+      "Acompanhe notícias, formações e conteúdos sobre a vida da Igreja, espiritualidade e formação católica.",
+    pathname: "/blog",
+    items: blogPosts.map((post) => ({
+      name: post.title,
+      pathname: `/blog/${post.id}`,
+    })),
+  })
+
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <JsonLd data={pageSchema} />
+
       <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
         <Badge
           variant="secondary"

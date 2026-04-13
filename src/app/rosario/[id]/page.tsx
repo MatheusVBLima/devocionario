@@ -6,7 +6,11 @@ import { JsonLd } from "@/components/JsonLd"
 import { Badge } from "@/components/ui/badge"
 import { getRosarioMystery, rosarioMysteries } from "@/data/rosario"
 import { canonicalUrl } from "@/lib/routes"
-import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo"
+import {
+  buildBreadcrumbSchema,
+  buildMetadata,
+  buildWebPageSchema,
+} from "@/lib/seo"
 
 type RosarioDetailProps = {
   params: Promise<{ id: string }>
@@ -37,6 +41,8 @@ export async function generateMetadata({
     description: mystery.descricao,
     pathname: `/rosario/${mystery.id}`,
     imagePath: `/rosario/${mystery.id}/opengraph-image`,
+    keywords: [mystery.nome, "santo rosário", "mistérios do rosário"],
+    section: "rosário",
   })
 }
 
@@ -56,10 +62,17 @@ export default async function RosarioDetailPage({ params }: RosarioDetailProps) 
     { name: "Santo Rosário", url: canonicalUrl("/rosario") },
     { name: mystery.nome, url: canonicalUrl(`/rosario/${mystery.id}`) },
   ])
+  const pageSchema = buildWebPageSchema({
+    title: mystery.nome,
+    description: mystery.descricao,
+    pathname: `/rosario/${mystery.id}`,
+    imagePath: `/rosario/${mystery.id}/opengraph-image`,
+  })
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={pageSchema} />
       <BreadcrumbNav items={breadcrumbItems} />
 
       <header className="space-y-4">

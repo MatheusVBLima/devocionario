@@ -3,13 +3,14 @@ import Image from "next/image"
 import Link from "next/link"
 import { Sun, BookOpen, Moon, Heart, UtensilsCrossed, HandHeart } from "lucide-react"
 
+import { JsonLd } from "@/components/JsonLd"
 import { SantoImage } from "@/components/SantoImage"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { santos } from "@/data/santos"
-import { buildMetadata } from "@/lib/seo"
+import { buildMetadata, buildWebPageSchema } from "@/lib/seo"
 
 export const metadata: Metadata = buildMetadata({
   title: "Rotina católica",
@@ -86,9 +87,17 @@ function formatDate(dia: string, mes: string) {
 
 export default function RotinaPage() {
   const santoDoDia = getSaintOfTheDay()
+  const pageSchema = buildWebPageSchema({
+    title: "Rotina católica",
+    description:
+      "Sugestões para incorporar a fé ao dia a dia, com destaque para o santo celebrado hoje.",
+    pathname: "/rotina",
+  })
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+      <JsonLd data={pageSchema} />
+
       <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
         <Badge 
           variant="secondary" 

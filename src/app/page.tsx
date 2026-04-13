@@ -7,7 +7,12 @@ import { PartnersSection } from "@/components/sections/PartnersSection"
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection"
 import { JsonLd } from "@/components/JsonLd"
 import { homeFaqItems } from "@/data/home"
-import { buildMetadata } from "@/lib/seo"
+import {
+  buildMetadata,
+  buildOrganizationSchema,
+  buildWebPageSchema,
+  buildWebsiteSchema,
+} from "@/lib/seo"
 import { canonicalUrl } from "@/lib/routes"
 
 export const metadata: Metadata = buildMetadata({
@@ -18,21 +23,14 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default function Home() {
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Devocionário",
-    url: canonicalUrl("/"),
-    inLanguage: "pt-BR",
-  }
-
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Devocionário",
-    url: canonicalUrl("/"),
-    logo: canonicalUrl("/logo.svg"),
-  }
+  const websiteSchema = buildWebsiteSchema()
+  const organizationSchema = buildOrganizationSchema()
+  const homePageSchema = buildWebPageSchema({
+    title: "Portal católico para oração, liturgia e formação",
+    description:
+      "Devocionário reúne orações, liturgia diária, santos e conteúdos católicos com leitura clara em qualquer tela.",
+    pathname: "/",
+  })
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -51,6 +49,7 @@ export default function Home() {
     <>
       <JsonLd data={websiteSchema} />
       <JsonLd data={organizationSchema} />
+      <JsonLd data={homePageSchema} />
       <JsonLd data={faqSchema} />
 
       <div className="relative flex w-full flex-col pb-8">

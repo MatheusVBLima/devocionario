@@ -8,15 +8,18 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: siteConfig.shortName,
     description: siteConfig.description,
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#f6f1e7",
     theme_color: siteConfig.themeColor,
     lang: siteConfig.locale,
+    categories: ["lifestyle", "education", "religion"],
     icons: [
       {
         src: "/favicon.ico",
         sizes: "any",
         type: "image/x-icon",
+        purpose: "any",
       },
     ],
   }

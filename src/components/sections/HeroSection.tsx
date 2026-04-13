@@ -6,7 +6,7 @@ import { Wrapper } from "@/components/utils/Wrapper"
 
 export function HeroSection() {
   return (
-    <section className="home-section pt-8 sm:pt-12">
+    <section className="home-section lg:pt-[calc(4rem+clamp(3.5rem,8vw,6rem))]">
       <Wrapper>
         <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <div className="flex flex-col gap-6">

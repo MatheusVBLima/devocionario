@@ -10,7 +10,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { blogPosts, getBlogPostById, getBlogPostContent } from "@/data/blog"
-import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo"
+import {
+  buildArticleSchema,
+  buildBreadcrumbSchema,
+  buildMetadata,
+  parseBrazilianDate,
+} from "@/lib/seo"
 import { canonicalUrl } from "@/lib/routes"
 
 type BlogDetailProps = {
@@ -35,8 +40,11 @@ export async function generateMetadata({
       description: "O artigo solicitado não foi encontrado.",
       pathname: `/blog/${id}`,
       type: "article",
+      section: "blog",
     })
   }
+
+  const publishedTime = parseBrazilianDate(post.date)
 
   return buildMetadata({
     title: post.title,
@@ -44,6 +52,10 @@ export async function generateMetadata({
     pathname: `/blog/${post.id}`,
     imagePath: `/blog/${post.id}/opengraph-image`,
     type: "article",
+    keywords: post.tags,
+    section: post.category,
+    publishedTime,
+    modifiedTime: publishedTime,
   })
 }
 
@@ -64,23 +76,18 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
     { name: post.title, url: canonicalUrl(`/blog/${post.id}`) },
   ])
 
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
+  const publishedTime = parseBrazilianDate(post.date)
+  const articleSchema = buildArticleSchema({
+    title: post.title,
     description: post.summary,
-    datePublished: post.date,
-    author: {
-      "@type": "Person",
-      name: post.author,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Devocionário",
-      url: canonicalUrl("/"),
-    },
-    mainEntityOfPage: canonicalUrl(`/blog/${post.id}`),
-  }
+    pathname: `/blog/${post.id}`,
+    imagePath: `/blog/${post.id}/opengraph-image`,
+    author: post.author,
+    tags: post.tags,
+    section: post.category,
+    publishedTime,
+    modifiedTime: publishedTime,
+  })
 
   return (
     <article className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">

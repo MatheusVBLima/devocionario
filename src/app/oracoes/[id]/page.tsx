@@ -8,14 +8,15 @@ import { OracaoContent } from "@/components/OracaoContent"
 import { Button } from "@/components/ui/button"
 import { oracoes } from "@/data/oracoes"
 import { canonicalUrl } from "@/lib/routes"
-import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo"
+import {
+  buildBreadcrumbSchema,
+  buildMetadata,
+  buildWebPageSchema,
+  normalizeDescription,
+} from "@/lib/seo"
 
 type OracaoPageProps = {
   params: Promise<{ id: string }>
-}
-
-function getOracaoDescription(content: string) {
-  return content.replace(/\*\*/g, "").replace(/\s+/g, " ").trim().slice(0, 160)
 }
 
 export function generateStaticParams() {
@@ -40,9 +41,11 @@ export async function generateMetadata({
 
   return buildMetadata({
     title: oracao.title,
-    description: getOracaoDescription(oracao.content),
+    description: normalizeDescription(oracao.content),
     pathname: `/oracoes/${oracao.id}`,
     imagePath: `/oracoes/${oracao.id}/opengraph-image`,
+    keywords: [oracao.category, oracao.title, "oração católica"],
+    section: "orações",
   })
 }
 
@@ -62,10 +65,17 @@ export default async function OracaoPage({ params }: OracaoPageProps) {
     { name: "Orações", url: canonicalUrl("/oracoes") },
     { name: oracao.title, url: canonicalUrl(`/oracoes/${oracao.id}`) },
   ])
+  const pageSchema = buildWebPageSchema({
+    title: oracao.title,
+    description: normalizeDescription(oracao.content),
+    pathname: `/oracoes/${oracao.id}`,
+    imagePath: `/oracoes/${oracao.id}/opengraph-image`,
+  })
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={pageSchema} />
       <BreadcrumbNav items={breadcrumbItems} />
 
       <OracaoContent oracao={oracao} />

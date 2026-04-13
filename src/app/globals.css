@@ -122,10 +122,12 @@
   }
 }
 
-.home-section {
-  padding-block: clamp(3.5rem, 8vw, 6rem);
-}
+@layer components {
+  .home-section {
+    padding-block: clamp(3.5rem, 8vw, 6rem);
+  }
 
-.section-kicker {
-  @apply rounded-full bg-secondary px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm;
+  .section-kicker {
+    @apply rounded-full bg-secondary px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm;
+  }
 }
