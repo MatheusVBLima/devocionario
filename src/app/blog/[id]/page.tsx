@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { blogPosts, getBlogPostById, getBlogPostContent } from "@/data/blog"
+import { getBlogPostById, getBlogPostContent, getBlogPosts } from "@/data/blog"
 import {
   buildArticleSchema,
   buildBreadcrumbSchema,
@@ -22,9 +22,11 @@ type BlogDetailProps = {
   params: Promise<{ id: string }>
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const blogPosts = await getBlogPosts()
+
   return blogPosts.map((post) => ({
-    id: String(post.id),
+    id: post.id,
   }))
 }
 
@@ -32,7 +34,7 @@ export async function generateMetadata({
   params,
 }: BlogDetailProps): Promise<Metadata> {
   const { id } = await params
-  const post = getBlogPostById(Number(id))
+  const post = await getBlogPostById(id)
 
   if (!post) {
     return buildMetadata({
@@ -61,7 +63,7 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({ params }: BlogDetailProps) {
   const { id } = await params
-  const post = getBlogPostById(Number(id))
+  const post = await getBlogPostById(id)
 
   if (!post) notFound()
 
@@ -88,6 +90,7 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
     publishedTime,
     modifiedTime: publishedTime,
   })
+  const contentHtml = await getBlogPostContent(post)
 
   return (
     <article className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
@@ -100,6 +103,7 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline">{post.category}</Badge>
           <Badge variant="secondary">{post.date}</Badge>
+          {post.readingTime ? <Badge variant="secondary">{post.readingTime}</Badge> : null}
         </div>
         <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
           {post.title}
@@ -124,7 +128,7 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
 
       <div
         className="prose prose-stone max-w-none leading-8 dark:prose-invert prose-headings:scroll-mt-24"
-        dangerouslySetInnerHTML={{ __html: getBlogPostContent(post) }}
+        dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
 
       <Separator />
@@ -147,6 +151,13 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
             Copie o link desta página ou compartilhe nas redes de sua preferência.
           </p>
           <div className="flex flex-wrap gap-3">
+            {post.externalUrl ? (
+              <Button asChild>
+                <Link href={post.externalUrl} target="_blank" rel="noreferrer">
+                  Ler artigo original
+                </Link>
+              </Button>
+            ) : null}
             <Button asChild variant="outline">
               <Link href="/blog">Voltar para o blog</Link>
             </Button>

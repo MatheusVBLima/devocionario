@@ -12,7 +12,7 @@ export const contentType = "image/png"
 
 export default async function BlogOpengraphImage({ params }: BlogOgProps) {
   const { id } = await params
-  const post = getBlogPostById(Number(id))
+  const post = await getBlogPostById(id)
 
   return new ImageResponse(
     (

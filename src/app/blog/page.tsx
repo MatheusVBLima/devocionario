@@ -5,7 +5,7 @@ import { BlogCollection } from "@/components/blog/BlogCollection"
 import { CollectionFallback } from "@/components/CollectionFallback"
 import { JsonLd } from "@/components/JsonLd"
 import { Badge } from "@/components/ui/badge"
-import { blogPosts } from "@/data/blog"
+import { getBlogPosts } from "@/data/blog"
 import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = buildMetadata({
@@ -15,7 +15,8 @@ export const metadata: Metadata = buildMetadata({
   pathname: "/blog",
 })
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogPosts = await getBlogPosts()
   const pageSchema = buildCollectionPageSchema({
     title: "Blog católico",
     description:

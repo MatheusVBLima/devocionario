@@ -125,7 +125,9 @@ export function BlogCollection({ posts }: BlogCollectionProps) {
 
               <CardFooter className="px-6 pb-6">
                 <Button asChild className="w-full">
-                  <Link href={`/blog/${post.id}`}>Ler artigo</Link>
+                  <Link href={`/blog/${post.id}`}>
+                    Ler artigo
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>

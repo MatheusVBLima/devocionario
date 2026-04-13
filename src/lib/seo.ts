@@ -93,29 +93,41 @@ export function normalizeDescription(text: string, maxLength = 160) {
 
   if (normalized.length <= maxLength) return normalized
 
-  return `${normalized.slice(0, maxLength - 1).trimEnd()}…`
+  return `${normalized.slice(0, maxLength - 1).trimEnd()}...`
 }
 
 export function parseBrazilianDate(date: string) {
   const months: Record<string, number> = {
     janeiro: 0,
+    jan: 0,
     fevereiro: 1,
+    fev: 1,
     março: 2,
+    mar: 2,
     abril: 3,
+    abr: 3,
     maio: 4,
+    mai: 4,
     junho: 5,
+    jun: 5,
     julho: 6,
+    jul: 6,
     agosto: 7,
+    ago: 7,
     setembro: 8,
+    set: 8,
     outubro: 9,
+    out: 9,
     novembro: 10,
+    nov: 10,
     dezembro: 11,
+    dez: 11,
   }
 
-  const match = date
-    .trim()
-    .toLowerCase()
-    .match(/^(\d{1,2})\s+de\s+([a-zçãé]+)\s+de\s+(\d{4})$/)
+  const normalizedDate = date.trim().toLowerCase()
+  const longMatch = normalizedDate.match(/^(\d{1,2})\s+de\s+([a-zçãé]+)\s+de\s+(\d{4})$/)
+  const shortMatch = normalizedDate.match(/^(\d{1,2})\.([a-zçãé]{3})\.(\d{4})$/)
+  const match = longMatch ?? shortMatch
 
   if (!match) return siteConfig.defaultPublishedAt
 

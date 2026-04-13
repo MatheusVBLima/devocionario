@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next"
 
-import { blogPosts } from "@/data/blog"
+import { getBlogPosts } from "@/data/blog"
 import { oracoes } from "@/data/oracoes"
 import { rosarioMysteries } from "@/data/rosario"
 import { santos } from "@/data/santos"
@@ -8,7 +8,8 @@ import { parseBrazilianDate } from "@/lib/seo"
 import { siteConfig } from "@/lib/site"
 import { canonicalUrl } from "@/lib/routes"
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const blogPosts = await getBlogPosts()
   const defaultLastModified = new Date(siteConfig.defaultPublishedAt)
   const staticRoutes = [
     { route: "/", changeFrequency: "weekly" as const, priority: 1 },
