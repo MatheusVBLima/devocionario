@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { getBlogPosts } from "@/data/blog"
 import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
 
+export const revalidate = 3600
+
 export const metadata: Metadata = buildMetadata({
   title: "Blog católico",
   description:
