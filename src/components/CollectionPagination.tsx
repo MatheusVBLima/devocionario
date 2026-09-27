@@ -1,80 +1,42 @@
-"use client"
-
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  Pagination, PaginationContent, PaginationEllipsis, PaginationItem,
+  PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination"
 import { getPaginationItems } from "@/lib/pagination"
-
-type CollectionPaginationProps = {
-  currentPage: number
-  totalPages: number
-  onPageChange: (page: number) => void
-}
+import { buildSearchHref } from "@/lib/routes"
 
 export function CollectionPagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: CollectionPaginationProps) {
+  currentPage, totalPages, pathname, filters = {},
+}: {
+  currentPage: number
+  totalPages: number
+  pathname: string
+  filters?: Record<string, string>
+}) {
   if (totalPages <= 1) return null
-
-  const items = getPaginationItems(currentPage, totalPages)
-
-  function handlePageChange(page: number) {
-    if (page === currentPage || page < 1 || page > totalPages) return
-    onPageChange(page)
-  }
+  const href = (page: number) => buildSearchHref(pathname, { ...filters, page })
 
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={(event) => {
-              event.preventDefault()
-              handlePageChange(Math.max(currentPage - 1, 1))
-            }}
-            className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined}
-          />
+          {currentPage > 1 ? (
+            <PaginationPrevious href={href(currentPage - 1)} />
+          ) : <span className="px-3 text-muted-foreground" aria-disabled>Anterior</span>}
         </PaginationItem>
-
-        {items.map((item, index) => (
+        {getPaginationItems(currentPage, totalPages).map((item, index) => (
           <PaginationItem key={`${item}-${index}`}>
-            {item === "ellipsis" ? (
-              <PaginationEllipsis />
-            ) : (
-              <PaginationLink
-                href="#"
-                isActive={item === currentPage}
-                onClick={(event) => {
-                  event.preventDefault()
-                  handlePageChange(item)
-                }}
-              >
+            {item === "ellipsis" ? <PaginationEllipsis /> : (
+              <PaginationLink href={href(item)} isActive={item === currentPage}>
                 {item}
               </PaginationLink>
             )}
           </PaginationItem>
         ))}
-
         <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={(event) => {
-              event.preventDefault()
-              handlePageChange(Math.min(currentPage + 1, totalPages))
-            }}
-            className={
-              currentPage === totalPages ? "pointer-events-none opacity-50" : undefined
-            }
-          />
+          {currentPage < totalPages ? (
+            <PaginationNext href={href(currentPage + 1)} />
+          ) : <span className="px-3 text-muted-foreground" aria-disabled>Próxima</span>}
         </PaginationItem>
       </PaginationContent>
     </Pagination>

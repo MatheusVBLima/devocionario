@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Image from "next/image"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 import { BreadcrumbNav } from "@/components/BreadcrumbNav"
 import { JsonLd } from "@/components/JsonLd"
@@ -8,14 +8,15 @@ import { Container } from "@/components/layout/Container"
 import { Kicker } from "@/components/layout/Kicker"
 import { PrefetchLink } from "@/components/PrefetchLink"
 import { Button } from "@/components/ui/button"
-import { getBlogPostById, getBlogPostContent, getBlogPosts } from "@/data/blog"
+import { getBlogPostById, getBlogPosts, isIndexablePost } from "@/data/blog"
 import {
   buildArticleSchema,
   buildBreadcrumbSchema,
   buildMetadata,
-  parseBrazilianDate,
+  buildWebPageSchema,
 } from "@/lib/seo"
 import { canonicalUrl } from "@/lib/routes"
+import { sanitizeArticleHtml } from "@/lib/sanitize-article-html"
 
 export const revalidate = 3600
 
@@ -26,7 +27,7 @@ type BlogDetailProps = {
 export async function generateStaticParams() {
   const blogPosts = await getBlogPosts()
 
-  return blogPosts.map((post) => ({
+  return blogPosts.filter(isIndexablePost).map((post) => ({
     id: post.id,
   }))
 }
@@ -37,28 +38,19 @@ export async function generateMetadata({
   const { id } = await params
   const post = await getBlogPostById(id)
 
-  if (!post) {
-    return buildMetadata({
-      title: "Artigo não encontrado",
-      description: "O artigo solicitado não foi encontrado.",
-      pathname: `/blog/${id}`,
-      type: "article",
-      section: "blog",
-    })
-  }
-
-  const publishedTime = parseBrazilianDate(post.date)
+  if (!post) notFound()
+  if (!isIndexablePost(post)) return { robots: { index: false, follow: false } }
 
   return buildMetadata({
     title: post.title,
     description: post.summary,
     pathname: `/blog/${post.id}`,
     imagePath: `/blog/${post.id}/opengraph-image`,
-    type: "article",
+    type: post.externalUrl ? "website" : "article",
     keywords: post.tags,
     section: post.category,
-    publishedTime,
-    modifiedTime: publishedTime,
+    publishedTime: post.externalUrl ? undefined : post.publishedAt,
+    modifiedTime: post.externalUrl ? undefined : post.updatedAt ?? post.publishedAt,
   })
 }
 
@@ -67,6 +59,8 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
   const post = await getBlogPostById(id)
 
   if (!post) notFound()
+  if (!isIndexablePost(post) && post.externalUrl) redirect(post.externalUrl)
+  if (!isIndexablePost(post)) notFound()
 
   const breadcrumbItems = [
     { label: "Blog", href: "/blog" },
@@ -79,8 +73,12 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
     { name: post.title, url: canonicalUrl(`/blog/${post.id}`) },
   ])
 
-  const publishedTime = parseBrazilianDate(post.date)
-  const articleSchema = buildArticleSchema({
+  const pageSchema = post.externalUrl ? buildWebPageSchema({
+    title: post.title,
+    description: post.summary,
+    pathname: `/blog/${post.id}`,
+    imagePath: `/blog/${post.id}/opengraph-image`,
+  }) : buildArticleSchema({
     title: post.title,
     description: post.summary,
     pathname: `/blog/${post.id}`,
@@ -88,22 +86,21 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
     author: post.author,
     tags: post.tags,
     section: post.category,
-    publishedTime,
-    modifiedTime: publishedTime,
+    publishedTime: post.publishedAt,
+    modifiedTime: post.updatedAt ?? post.publishedAt,
   })
-  const contentHtml = await getBlogPostContent(post)
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
-      <JsonLd data={articleSchema} />
+      <JsonLd data={pageSchema} />
       <BreadcrumbNav items={breadcrumbItems} />
 
       <article>
         <Container className="section-y flex max-w-[900px] flex-col gap-12">
           <header className="flex flex-col gap-7">
             <Kicker>
-              {post.category} <span aria-hidden>·</span> {post.date}
+              {post.category}{post.date ? <> <span aria-hidden>·</span> {post.date}</> : null}
               {post.readingTime ? (
                 <>
                   {" "}
@@ -112,7 +109,9 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
               ) : null}
             </Kicker>
             <h1 className="text-display text-[clamp(2.5rem,6vw,5rem)]">{post.title}</h1>
-            <p className="text-xl leading-relaxed text-pretty text-muted-foreground">{post.summary}</p>
+            {!post.externalUrl ? (
+              <p className="text-xl leading-relaxed text-pretty text-muted-foreground">{post.summary}</p>
+            ) : null}
             <p className="text-sm text-muted-foreground">
               Por <span className="font-medium text-foreground">{post.author}</span>
             </p>
@@ -131,12 +130,21 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
             </div>
           ) : null}
 
-          <div
-            className="prose prose-lg max-w-none prose-headings:scroll-mt-28"
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
-          />
+          {post.externalUrl ? (
+            <div className="prose prose-lg max-w-none whitespace-pre-line">
+              <p>{post.summary}</p>
+              <p>Leia o texto completo na fonte original.</p>
+            </div>
+          ) : post.contentHtml ? (
+            <div
+              className="prose prose-lg max-w-none prose-headings:scroll-mt-28"
+              dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(post.contentHtml) }}
+            />
+          ) : (
+            <p className="prose prose-lg max-w-none">{post.summary}</p>
+          )}
 
-          <section className="flex flex-col gap-4 border-t pt-8">
+          {post.tags.length > 0 ? <section className="flex flex-col gap-4 border-t pt-8">
             <h2 className="font-mono text-xs tracking-[0.08em] text-liturgical-ink uppercase">Tags</h2>
             <ul className="flex flex-wrap gap-2">
               {post.tags.map((tag) => (
@@ -148,7 +156,7 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
                 </li>
               ))}
             </ul>
-          </section>
+          </section> : null}
 
           <section className="flex flex-col gap-4 rounded-md bg-card p-7">
             <h2 className="font-serif text-3xl leading-tight">Compartilhar</h2>
@@ -158,7 +166,7 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
             <div className="flex flex-wrap gap-3">
               {post.externalUrl ? (
                 <Button asChild>
-                  <a href={post.externalUrl} target="_blank" rel="noreferrer">
+                  <a href={post.externalUrl} target="_blank" rel="noopener noreferrer">
                     Ler artigo original
                   </a>
                 </Button>

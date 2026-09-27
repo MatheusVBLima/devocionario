@@ -1,4 +1,5 @@
-import { getBlogPostById } from "@/data/blog"
+import { notFound } from "next/navigation"
+import { getBlogPostById, isIndexablePost } from "@/data/blog"
 import { renderOgImage, ogSize } from "@/lib/og"
 
 type BlogOgProps = {
@@ -12,10 +13,11 @@ export const contentType = "image/png"
 export default async function BlogOpengraphImage({ params }: BlogOgProps) {
   const { id } = await params
   const post = await getBlogPostById(id)
+  if (!post || !isIndexablePost(post)) notFound()
 
   return renderOgImage({
     eyebrow: "Devocionário • Blog",
-    title: post?.title ?? "Artigo do Devocionário",
-    subtitle: post?.summary ?? "Conteúdo editorial e reflexões sobre a vida da Igreja.",
+    title: post.title,
+    subtitle: post.summary,
   })
 }

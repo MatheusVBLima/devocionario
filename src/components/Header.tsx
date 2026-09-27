@@ -7,7 +7,7 @@ import { MenuIcon, XIcon } from "lucide-react"
 
 import { Container } from "@/components/layout/Container"
 import { Logo } from "@/components/layout/Logo"
-import { PrayerModeToggle } from "@/components/layout/PrayerModeToggle"
+import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { navLinks } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
@@ -44,11 +44,11 @@ export default function Header() {
                 </Link>
               )
             })}
-            <PrayerModeToggle />
+            <ThemeSwitcher />
           </nav>
 
           <div className="flex items-center gap-2 lg:hidden">
-            <PrayerModeToggle />
+            <ThemeSwitcher />
             <button
               type="button"
               aria-expanded={open}

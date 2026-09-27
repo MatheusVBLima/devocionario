@@ -106,7 +106,7 @@ export default async function RootLayout({
   // O site se veste com a cor do tempo litúrgico em que a Igreja está.
   const liturgia = await getLiturgiaDoDia()
   const liturgicalStyle = {
-    "--liturgical": liturgicalColorFor(liturgia?.cor),
+    "--liturgical-daily": liturgicalColorFor(liturgia?.cor),
   } as React.CSSProperties
 
   return (
@@ -118,12 +118,7 @@ export default async function RootLayout({
     >
       <body>
         <NuqsAdapter>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider>
             <a
               href="#conteudo"
               className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-full focus:bg-foreground focus:px-4 focus:py-2 focus:text-background"

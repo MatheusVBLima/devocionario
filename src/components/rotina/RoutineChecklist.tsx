@@ -26,7 +26,11 @@ export function RoutineChecklist({ tips, dayKey }: RoutineChecklistProps) {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(storageKey)
-      if (saved) setDone(JSON.parse(saved))
+      if (saved) {
+        // A chave só existe no navegador; a leitura após a hidratação é intencional.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setDone(JSON.parse(saved))
+      }
     } catch {
       // Sem acesso ao armazenamento: a lista funciona só na sessão.
     }

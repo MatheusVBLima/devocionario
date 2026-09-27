@@ -41,7 +41,7 @@
 
 :root {
   /* Sobrescrita pelo layout com a cor litúrgica do dia. */
-  --liturgical: oklch(0.5 0.1 155);
+  --liturgical: var(--liturgical-daily, oklch(0.5 0.1 155));
   --liturgical-ink: var(--liturgical);
 
   --background: #f5f4f0;
@@ -63,6 +63,12 @@
   --input: #dcd9d1;
   --ring: var(--liturgical);
 }
+
+/* Escolhas manuais preservadas do novo seletor de temas. */
+[data-tempo="comum"] { --liturgical: oklch(0.5 0.1 155); }
+[data-tempo="advento-quaresma"] { --liturgical: oklch(0.46 0.12 305); }
+[data-tempo="festas-solenidades"] { --liturgical: oklch(0.6 0.11 75); }
+[data-tempo="martires-pentecostes"] { --liturgical: oklch(0.5 0.15 25); }
 
 /* "Modo oração": tema escuro. */
 .dark {

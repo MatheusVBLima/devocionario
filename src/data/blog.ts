@@ -1,19 +1,21 @@
 import { cache } from "react"
 
-import { extractExternalArticleDetails } from "@/data/blog-external"
 import { siteConfig } from "@/lib/site"
 
 export type BlogPost = {
   id: string
   title: string
   summary: string
-  date: string
+  date: string | null
+  publishedAt?: string
+  updatedAt?: string
   author: string
   category: string
   image: string | null
   tags: string[]
   contentHtml?: string
   externalUrl?: string | null
+  summaryApproved?: boolean
   readingTime?: string | null
 }
 
@@ -175,7 +177,6 @@ const legacyBlogPosts: BlogPost[] = [
 ] as const
 
 const ARTICLES_REVALIDATE_SECONDS = 3600
-let didLogRemoteBlogError = false
 
 function toStringOrNull(value: unknown) {
   if (typeof value === "string") {
@@ -243,11 +244,11 @@ function toAssetUrl(value: unknown): string | null {
 
 function formatDate(value: unknown) {
   const raw = toStringOrNull(value)
-  if (!raw) return siteConfig.defaultPublishedAt.slice(0, 10)
+  if (!raw) return null
 
   const date = new Date(raw)
 
-  if (Number.isNaN(date.getTime())) return raw
+  if (Number.isNaN(date.getTime())) return null
 
   return new Intl.DateTimeFormat("pt-BR", {
     day: "numeric",
@@ -255,6 +256,28 @@ function formatDate(value: unknown) {
     year: "numeric",
     timeZone: "UTC",
   }).format(date)
+}
+
+function toIsoDate(value: unknown) {
+  const raw = toStringOrNull(value)
+  if (!raw) return undefined
+  const date = new Date(raw)
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString()
+}
+
+export function validExternalUrl(value: unknown): string | null {
+  const raw = toStringOrNull(value)
+  if (!raw) return null
+  try {
+    const url = new URL(raw)
+    return url.protocol === "https:" ? url.toString() : null
+  } catch {
+    return null
+  }
+}
+
+export function isIndexablePost(post: BlogPost) {
+  return !post.externalUrl || (post.summaryApproved === true && Boolean(post.summary.trim()))
 }
 
 function buildFallbackSummary({
@@ -291,38 +314,7 @@ function extractImage(record: Record<string, unknown>) {
   )
 }
 
-const fetchExternalArticleDetails = cache(async (url: string) => {
-  const response = await fetch(url, {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-    },
-    next: { revalidate: ARTICLES_REVALIDATE_SECONDS },
-  })
-
-  if (!response.ok) {
-    throw new Error(`Falha ao carregar artigo externo: ${response.status}`)
-  }
-
-  const html = await response.text()
-  return extractExternalArticleDetails(html)
-})
-
-async function enrichBlogPost(post: BlogPost): Promise<BlogPost> {
-  if (!post.externalUrl) return post
-
-  const details = await fetchExternalArticleDetails(post.externalUrl)
-
-  return {
-    ...post,
-    summary: details.summary ?? post.summary,
-    date: details.dateLabel ?? post.date,
-    tags: details.tags.length > 0 ? details.tags : post.tags,
-    contentHtml: details.contentHtml ?? post.contentHtml,
-    readingTime: details.readingTime ?? post.readingTime,
-  }
-}
-
-function normalizeArticle(record: Record<string, unknown>): BlogPost | null {
+export function normalizeArticle(record: Record<string, unknown>): BlogPost | null {
   const id = firstString(record.id, record.slug, record.chave)
   const title = firstString(record.title, record.titulo, record.nome, record.name)
   const authorRecord =
@@ -351,6 +343,9 @@ function normalizeArticle(record: Record<string, unknown>): BlogPost | null {
 
   if (!id || !title) return null
 
+  const rawExternalUrl = firstString(record.url, record.link, record.href)
+  const externalUrl = validExternalUrl(rawExternalUrl)
+  if (rawExternalUrl && !externalUrl) return null
   const summary = firstString(
       record.summary,
       record.resumo,
@@ -358,25 +353,25 @@ function normalizeArticle(record: Record<string, unknown>): BlogPost | null {
       record.descricao,
       record.excerpt,
       record.subtitulo,
-    ) ?? buildFallbackSummary({ title, category, author })
+    ) ?? (externalUrl ? "" : buildFallbackSummary({ title, category, author }))
+  const publishedAt = toIsoDate(
+    record.date ?? record.data ?? record.date_created ?? record.date_published ??
+      record.published_at ?? record.data_publicacao,
+  )
+  const updatedAt = toIsoDate(record.date_updated ?? record.updated_at)
 
   return {
     id,
     title,
     summary,
-    date: formatDate(
-      record.date ??
-        record.data ??
-        record.date_created ??
-        record.date_published ??
-        record.published_at ??
-        record.data_publicacao,
-    ),
+    date: formatDate(publishedAt),
+    publishedAt,
+    updatedAt,
     author,
     category,
     image: extractImage(record),
     tags: toTextArray(record.tags ?? record.tag ?? record.etiquetas),
-    contentHtml:
+    contentHtml: externalUrl ? undefined :
       firstString(
         record.contentHtml,
         record.content_html,
@@ -387,7 +382,10 @@ function normalizeArticle(record: Record<string, unknown>): BlogPost | null {
         record.body,
         record.corpo,
       ) ?? undefined,
-    externalUrl: firstString(record.url, record.link, record.href),
+    externalUrl,
+    summaryApproved: externalUrl
+      ? record.summary_approved === true && Boolean(summary)
+      : true,
   }
 }
 
@@ -397,12 +395,11 @@ const fetchRemoteBlogPosts = cache(async () => {
   const collection = process.env.DIRECTUS_ARTICLES_COLLECTION ?? "Artigos"
 
   if (!directusUrl || !directusToken) {
-    console.warn("[blog] DIRECTUS_URL ou DIRECTUS_TOKEN não definidos — usando fallback.")
-    return null
+    if (process.env.NODE_ENV === "development") return legacyBlogPosts
+    throw new Error("DIRECTUS_URL ou DIRECTUS_TOKEN não definidos.")
   }
 
   const endpoint = `${directusUrl}/items/${collection}`
-  console.log(`[blog] Buscando artigos em: ${endpoint}`)
 
   const response = await fetch(endpoint, {
     headers: {
@@ -410,6 +407,7 @@ const fetchRemoteBlogPosts = cache(async () => {
       "Content-Type": "application/json; charset=utf-8",
     },
     next: { revalidate: ARTICLES_REVALIDATE_SECONDS },
+    signal: AbortSignal.timeout(8000),
   })
 
   if (!response.ok) {
@@ -417,42 +415,31 @@ const fetchRemoteBlogPosts = cache(async () => {
   }
 
   const payload = (await response.json()) as { data?: unknown }
-  const items = Array.isArray(payload?.data) ? payload.data : []
+  if (!Array.isArray(payload?.data) || payload.data.length === 0) {
+    throw new Error("O CMS não retornou uma lista válida de artigos.")
+  }
+  const items = payload.data
 
   const normalizedItems = items
     .map((item) => normalizeArticle((item ?? {}) as Record<string, unknown>))
     .filter((item): item is BlogPost => Boolean(item))
 
-  return Promise.all(normalizedItems.map((item) => enrichBlogPost(item)))
+  if (normalizedItems.length === 0 || normalizedItems.length !== items.length) {
+    throw new Error("O CMS retornou artigos ausentes ou inválidos.")
+  }
+  return normalizedItems
 })
 
 export const getBlogPosts = cache(async () => {
   try {
-    const remotePosts = await fetchRemoteBlogPosts()
-    if (remotePosts && remotePosts.length > 0) return remotePosts
+    return await fetchRemoteBlogPosts()
   } catch (error) {
-    if (!didLogRemoteBlogError) {
-      didLogRemoteBlogError = true
-      console.error("Não foi possível carregar os artigos remotos.", error)
-    }
+    console.error("Não foi possível carregar os artigos remotos.", error)
+    throw error
   }
-
-  return legacyBlogPosts
 })
 
 export const getBlogPostById = cache(async (id: string) => {
   const posts = await getBlogPosts()
   return posts.find((post) => post.id === id)
 })
-
-export async function getBlogPostContent(post: BlogPost) {
-  return (
-    post.contentHtml ??
-    [
-      `<p>${post.summary}</p>`,
-      post.externalUrl
-        ? `<p>O conteúdo completo deste artigo está disponível na fonte original.</p><p><a href="${post.externalUrl}" target="_blank" rel="noreferrer">Abrir artigo original</a></p>`
-        : `<p>Este conteúdo faz parte do acervo editorial do Devocionário e será ampliado em futuras atualizações do projeto.</p>`,
-    ].join("")
-  )
-}
