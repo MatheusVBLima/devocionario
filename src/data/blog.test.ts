@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { isIndexablePost, normalizeArticle, validExternalUrl } from "./blog"
+import { getBlogPosts, isIndexablePost, normalizeArticle, validExternalUrl } from "./blog"
 
 const source = "https://example.org/artigo"
 
@@ -23,5 +23,55 @@ describe("editorial blog model", () => {
     expect(validExternalUrl("javascript:alert(1)")).toBeNull()
     expect(normalizeArticle({ id: "uuid", name: "Artigo", url: "javascript:alert(1)" })).toBeNull()
     expect(normalizeArticle({ id: "uuid", name: "Artigo", url: "http://example.org" })).toBeNull()
+  })
+})
+
+describe("temporary CMS outage handling", () => {
+  it("shows no invented articles when the CMS responds with 403", async () => {
+    const previousFetch = globalThis.fetch
+    const previousUrl = process.env.DIRECTUS_URL
+    const previousToken = process.env.DIRECTUS_TOKEN
+    const previousLog = console.error
+    try {
+      process.env.DIRECTUS_URL = "https://example.invalid"
+      process.env.DIRECTUS_TOKEN = "test-token"
+      globalThis.fetch = Object.assign(
+        async () => new Response(null, { status: 403 }),
+        { preconnect: previousFetch.preconnect },
+      )
+      console.error = () => {}
+      expect(await getBlogPosts()).toEqual([])
+    } finally {
+      globalThis.fetch = previousFetch
+      console.error = previousLog
+      if (previousUrl === undefined) delete process.env.DIRECTUS_URL
+      else process.env.DIRECTUS_URL = previousUrl
+      if (previousToken === undefined) delete process.env.DIRECTUS_TOKEN
+      else process.env.DIRECTUS_TOKEN = previousToken
+    }
+  })
+
+  it("still fails for other CMS errors", async () => {
+    const previousFetch = globalThis.fetch
+    const previousUrl = process.env.DIRECTUS_URL
+    const previousToken = process.env.DIRECTUS_TOKEN
+    const previousLog = console.error
+    try {
+      process.env.DIRECTUS_URL = "https://example.invalid"
+      process.env.DIRECTUS_TOKEN = "test-token"
+      globalThis.fetch = Object.assign(
+        async () => new Response(null, { status: 500 }),
+        { preconnect: previousFetch.preconnect },
+      )
+      console.error = () => {}
+      await expect(getBlogPosts()).rejects.toThrow("HTTP 500")
+    } finally {
+      globalThis.fetch = previousFetch
+      console.error = previousLog
+      if (previousUrl === undefined) delete process.env.DIRECTUS_URL
+      else process.env.DIRECTUS_URL = previousUrl
+      if (previousToken === undefined) delete process.env.DIRECTUS_TOKEN
+      else process.env.DIRECTUS_TOKEN = previousToken
+    }
   })
 })

@@ -178,6 +178,8 @@ const legacyBlogPosts: BlogPost[] = [
 
 const ARTICLES_REVALIDATE_SECONDS = 3600
 
+class BlogCmsForbiddenError extends Error {}
+
 function toStringOrNull(value: unknown) {
   if (typeof value === "string") {
     const normalized = value.trim()
@@ -411,6 +413,9 @@ const fetchRemoteBlogPosts = cache(async () => {
   })
 
   if (!response.ok) {
+    if (response.status === 403) {
+      throw new BlogCmsForbiddenError("O CMS negou acesso aos artigos (HTTP 403).")
+    }
     throw new Error(`Falha ao carregar artigos remotos: HTTP ${response.status} ${response.statusText} — ${endpoint}`)
   }
 
@@ -435,6 +440,8 @@ export const getBlogPosts = cache(async () => {
     return await fetchRemoteBlogPosts()
   } catch (error) {
     console.error("Não foi possível carregar os artigos remotos.", error)
+    // Contorno temporário: nunca apresentar os artigos de exemplo como conteúdo real.
+    if (error instanceof BlogCmsForbiddenError) return []
     throw error
   }
 })

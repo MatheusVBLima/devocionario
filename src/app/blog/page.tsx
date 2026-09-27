@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+import { Newspaper } from "lucide-react"
+import { AppEmptyState } from "@/components/AppEmptyState"
 import { BlogCollection } from "@/components/blog/BlogCollection"
 import { CollectionPagination } from "@/components/CollectionPagination"
 import { CollectionSearchForm } from "@/components/filters/CollectionSearchForm"
@@ -27,22 +29,24 @@ function filterPosts(posts: BlogPost[], q: string, selected: string) {
 
 async function load(searchParams: CollectionSearchParams) {
   const posts = await getBlogPosts()
+  const unavailable = posts.length === 0
   const categories = ["Todas", ...new Set(posts.map((post) => post.category))]
   const query = await parseCollectionQuery(searchParams, "categoria", categories)
   const { items, totalPages } = collectionPage(filterPosts(posts, query.q, query.selected), query.page)
-  return { query, items, totalPages, categories }
+  return { query, items, totalPages, categories, unavailable }
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: CollectionSearchParams }): Promise<Metadata> {
-  const { query } = await load(searchParams)
-  return collectionMetadata(buildMetadata({ title, description, pathname }), pathname, query)
+  const { query, unavailable } = await load(searchParams)
+  const metadata = collectionMetadata(buildMetadata({ title, description, pathname }), pathname, query)
+  return unavailable ? { ...metadata, robots: { index: false, follow: true } } : metadata
 }
 
 export default async function BlogPage({ searchParams }: { searchParams: CollectionSearchParams }) {
-  const { query, items, totalPages, categories } = await load(searchParams)
+  const { query, items, totalPages, categories, unavailable } = await load(searchParams)
   const filters = { q: query.q, categoria: query.selected === "Todas" ? "" : query.selected }
   const pagePath = buildSearchHref(pathname, { page: query.page })
-  const pageSchema = !query.filtered && buildCollectionPageSchema({
+  const pageSchema = !unavailable && !query.filtered && buildCollectionPageSchema({
     title, description, pathname: pagePath,
     items: items.map((post) => ({
       name: post.title,
@@ -54,9 +58,19 @@ export default async function BlogPage({ searchParams }: { searchParams: Collect
     {pageSchema ? <JsonLd data={pageSchema} /> : null}
     <PageHeader kicker="Conteúdo editorial" title="Blog" description="Notícias, formações e reflexões sobre a vida da Igreja, espiritualidade e cultura católica." />
     <Container className="section-y flex flex-col gap-14">
-      <CollectionSearchForm pathname={pathname} search={query.q} selected={query.selected} filterName="categoria" options={categories.map((value) => ({ value, label: value }))} placeholder="Pesquisar artigos..." />
-      <BlogCollection items={items} />
-      <CollectionPagination currentPage={query.page} totalPages={totalPages} pathname={pathname} filters={filters} />
+      {unavailable ? (
+        <AppEmptyState
+          title="Blog temporariamente indisponível"
+          description="Não conseguimos carregar os artigos agora. As outras seções do Devocionário continuam disponíveis; tente novamente mais tarde."
+          actionHref="/"
+          actionLabel="Voltar ao início"
+          icon={Newspaper}
+        />
+      ) : <>
+        <CollectionSearchForm pathname={pathname} search={query.q} selected={query.selected} filterName="categoria" options={categories.map((value) => ({ value, label: value }))} placeholder="Pesquisar artigos..." />
+        <BlogCollection items={items} />
+        <CollectionPagination currentPage={query.page} totalPages={totalPages} pathname={pathname} filters={filters} />
+      </>}
     </Container>
   </>
 }
