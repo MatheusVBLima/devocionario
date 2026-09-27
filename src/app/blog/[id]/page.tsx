@@ -1,16 +1,13 @@
 import type { Metadata } from "next"
-
-export const revalidate = 3600
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { BreadcrumbNav } from "@/components/BreadcrumbNav"
 import { JsonLd } from "@/components/JsonLd"
-import { Badge } from "@/components/ui/badge"
+import { Container } from "@/components/layout/Container"
+import { Kicker } from "@/components/layout/Kicker"
+import { PrefetchLink } from "@/components/PrefetchLink"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import { getBlogPostById, getBlogPostContent, getBlogPosts } from "@/data/blog"
 import {
   buildArticleSchema,
@@ -19,6 +16,8 @@ import {
   parseBrazilianDate,
 } from "@/lib/seo"
 import { canonicalUrl } from "@/lib/routes"
+
+export const revalidate = 3600
 
 type BlogDetailProps = {
   params: Promise<{ id: string }>
@@ -95,77 +94,82 @@ export default async function BlogPostPage({ params }: BlogDetailProps) {
   const contentHtml = await getBlogPostContent(post)
 
   return (
-    <article className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
+    <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={articleSchema} />
-
       <BreadcrumbNav items={breadcrumbItems} />
 
-      <header className="flex flex-col gap-5">
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="outline">{post.category}</Badge>
-          <Badge variant="secondary">{post.date}</Badge>
-          {post.readingTime ? <Badge variant="secondary">{post.readingTime}</Badge> : null}
-        </div>
-        <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-          {post.title}
-        </h1>
-        <p className="max-w-3xl text-pretty text-lg leading-8 text-muted-foreground">
-          {post.summary}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Por <span className="font-medium text-foreground">{post.author}</span>
-        </p>
-      </header>
+      <article>
+        <Container className="section-y flex max-w-[900px] flex-col gap-12">
+          <header className="flex flex-col gap-7">
+            <Kicker>
+              {post.category} <span aria-hidden>·</span> {post.date}
+              {post.readingTime ? (
+                <>
+                  {" "}
+                  <span aria-hidden>·</span> {post.readingTime}
+                </>
+              ) : null}
+            </Kicker>
+            <h1 className="text-display text-[clamp(2.5rem,6vw,5rem)]">{post.title}</h1>
+            <p className="text-xl leading-relaxed text-pretty text-muted-foreground">{post.summary}</p>
+            <p className="text-sm text-muted-foreground">
+              Por <span className="font-medium text-foreground">{post.author}</span>
+            </p>
+          </header>
 
-      <div className="relative aspect-[16/8] w-full overflow-hidden rounded-3xl border border-border/70 bg-muted">
-        <Image
-          src={post.image ?? "/placeholder.svg"}
-          alt={post.title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 1200px) 100vw, 1200px"
-        />
-      </div>
+          {post.image ? (
+            <div className="relative aspect-[16/8] w-full overflow-hidden rounded-md border bg-card">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 900px) 100vw, 820px"
+              />
+            </div>
+          ) : null}
 
-      <div
-        className="prose prose-stone max-w-none leading-8 dark:prose-invert prose-headings:scroll-mt-24"
-        dangerouslySetInnerHTML={{ __html: contentHtml }}
-      />
+          <div
+            className="prose prose-lg max-w-none prose-headings:scroll-mt-28"
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
+          />
 
-      <Separator />
+          <section className="flex flex-col gap-4 border-t pt-8">
+            <h2 className="font-mono text-xs tracking-[0.08em] text-liturgical-ink uppercase">Tags</h2>
+            <ul className="flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <li
+                  key={tag}
+                  className="rounded-full border px-3 py-1 font-mono text-[11px] tracking-[0.06em] text-muted-foreground uppercase"
+                >
+                  {tag}
+                </li>
+              ))}
+            </ul>
+          </section>
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">Tags</h2>
-        <div className="flex flex-wrap gap-2">
-          {post.tags.map((tag) => (
-            <Badge key={tag} variant="outline">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </section>
-
-      <Card>
-        <CardContent className="flex flex-col gap-4 py-6">
-          <h2 className="text-lg font-semibold">Compartilhar</h2>
-          <p className="text-sm text-muted-foreground">
-            Copie o link desta página ou compartilhe nas redes de sua preferência.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {post.externalUrl ? (
-              <Button asChild>
-                <Link href={post.externalUrl} target="_blank" rel="noreferrer">
-                  Ler artigo original
-                </Link>
+          <section className="flex flex-col gap-4 rounded-md bg-card p-7">
+            <h2 className="font-serif text-3xl leading-tight">Compartilhar</h2>
+            <p className="text-sm text-muted-foreground">
+              Copie o link desta página ou compartilhe nas redes de sua preferência.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {post.externalUrl ? (
+                <Button asChild>
+                  <a href={post.externalUrl} target="_blank" rel="noreferrer">
+                    Ler artigo original
+                  </a>
+                </Button>
+              ) : null}
+              <Button asChild variant="outline">
+                <PrefetchLink href="/blog">Voltar para o blog</PrefetchLink>
               </Button>
-            ) : null}
-            <Button asChild variant="outline">
-              <Link href="/blog">Voltar para o blog</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </article>
+            </div>
+          </section>
+        </Container>
+      </article>
+    </>
   )
 }

@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 
 import { JsonLd } from "@/components/JsonLd"
-import { Badge } from "@/components/ui/badge"
+import { Container } from "@/components/layout/Container"
+import { PageHeader } from "@/components/layout/PageHeader"
+import { PrefetchLink } from "@/components/PrefetchLink"
 import { Button } from "@/components/ui/button"
 import { rosarioMysteries } from "@/data/rosario"
 import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
@@ -27,58 +28,57 @@ export default function RosarioPage() {
   })
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+    <>
       <JsonLd data={pageSchema} />
 
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-        <Badge 
-          variant="secondary" 
-          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
-        >
-          Devoção mariana
-        </Badge>
-        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
-          Santo Rosário
-        </h1>
-        <div className="my-2 h-px w-12 bg-border/50" />
-        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-          Escolha um conjunto de mistérios para rezar o rosário com guia, reflexões e orações.
-        </p>
-      </header>
+      <PageHeader
+        kicker="Devoção mariana"
+        title="Santo Rosário"
+        description="Escolha um conjunto de mistérios para rezar o rosário com guia, reflexões e orações."
+      />
 
-      <div className="mx-auto mt-8 flex w-full max-w-4xl flex-col gap-12 sm:gap-16">
-        {rosarioMysteries.map((misterio) => (
-          <div
-            key={misterio.id}
-            className="group relative flex flex-col gap-6 rounded-[2rem] border border-transparent bg-muted/30 p-6 transition-all duration-500 hover:bg-muted/50 sm:p-10 md:flex-row md:items-start md:gap-10"
-          >
-            <div className="flex w-full flex-col gap-4 md:w-1/3">
-              <Badge variant="outline" className="w-fit border-border/50 bg-background/50">
-                {misterio.dias}
-              </Badge>
-              <h2 className="text-3xl font-semibold tracking-tight">{misterio.nome}</h2>
-              <p className="text-sm leading-relaxed text-muted-foreground">{misterio.descricao}</p>
-              <Button asChild variant="secondary" className="mt-4 w-fit">
-                <Link href={`/rosario/${misterio.id}`}>Rezar {misterio.nome.toLowerCase()}</Link>
-              </Button>
-            </div>
+      <Container className="section-y">
+        <ul className="flex flex-col border-b">
+          {rosarioMysteries.map((misterio) => (
+            <li
+              key={misterio.id}
+              className="grid gap-8 border-t py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20"
+            >
+              <div className="flex flex-col items-start gap-5">
+                <span className="font-mono text-xs tracking-[0.08em] text-liturgical-ink uppercase">
+                  {misterio.dias}
+                </span>
+                <h2 className="text-display text-[clamp(2.5rem,5vw,4.25rem)] leading-none">
+                  {misterio.nome}
+                </h2>
+                <p className="max-w-md leading-relaxed text-muted-foreground">{misterio.descricao}</p>
+                <Button asChild className="mt-2">
+                  <PrefetchLink href={`/rosario/${misterio.id}`}>
+                    Rezar {misterio.nome.toLowerCase()}
+                  </PrefetchLink>
+                </Button>
+              </div>
 
-            <div className="flex-1">
-              <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Os cinco mistérios
-              </h3>
-              <ul className="flex flex-col gap-4">
-                {misterio.misteriosDetalhados.map((item, i) => (
-                  <li key={item.titulo} className="flex gap-4">
-                    <span className="text-lg font-medium text-muted-foreground/50">{i + 1}.</span>
-                    <span className="text-sm leading-relaxed text-foreground">{item.titulo}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+              <div>
+                <h3 className="mb-2 font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                  Os cinco mistérios
+                </h3>
+                <ol className="flex flex-col">
+                  {misterio.misteriosDetalhados.map((item, i) => (
+                    <li
+                      key={item.titulo}
+                      className="grid grid-cols-[2.5rem_1fr] items-baseline gap-4 border-b py-4 last:border-b-0"
+                    >
+                      <span className="font-mono text-[13px] text-muted-foreground">{i + 1}.</span>
+                      <span className="font-serif text-2xl leading-tight">{item.titulo}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </>
   )
 }

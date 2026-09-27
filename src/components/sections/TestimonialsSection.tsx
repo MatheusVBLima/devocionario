@@ -1,36 +1,35 @@
-import { Star } from "lucide-react"
-
+import { Container } from "@/components/layout/Container"
+import { Kicker } from "@/components/layout/Kicker"
 import { homeTestimonials } from "@/data/home"
-import { Wrapper } from "@/components/utils/Wrapper"
 
 export function TestimonialsSection() {
   return (
-    <section className="home-section">
-      <Wrapper className="space-y-10">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
-          <span className="section-kicker">Quem usa</span>
-          <h2 className="text-balance font-serif text-3xl font-light tracking-tight sm:text-4xl">
+    <section className="border-t">
+      <Container className="section-y">
+        <div className="mb-12 flex flex-col gap-6">
+          <Kicker>Quem usa</Kicker>
+          <h2 className="text-display max-w-4xl text-[clamp(2.5rem,5vw,4.25rem)] leading-none">
             Relatos de quem já incorporou o Devocionário à rotina de oração.
           </h2>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid gap-x-10 md:grid-cols-2 lg:grid-cols-3">
           {homeTestimonials.map((review) => (
-            <article
-              key={review.name}
-              className="flex h-full flex-col gap-4 rounded-[1.75rem] border border-border/70 bg-card/80 p-6"
-            >
-              <div className="flex gap-1 text-amber-500">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="size-4" fill="currentColor" />
-                ))}
-              </div>
-              <p className="flex-1 text-sm leading-7 text-muted-foreground">“{review.text}”</p>
-              <p className="text-sm font-medium">{review.name}</p>
-            </article>
+            <li key={review.name} className="border-t py-8">
+              <figure className="flex h-full flex-col justify-between gap-6">
+                <blockquote className="font-serif text-[1.65rem] leading-[1.2] text-balance">
+                  <span className="text-liturgical-ink">“</span>
+                  {review.text}
+                  <span className="text-liturgical-ink">”</span>
+                </blockquote>
+                <figcaption className="font-mono text-xs tracking-[0.06em] text-muted-foreground uppercase">
+                  {review.name}
+                </figcaption>
+              </figure>
+            </li>
           ))}
-        </div>
-      </Wrapper>
+        </ul>
+      </Container>
     </section>
   )
 }

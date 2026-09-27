@@ -4,7 +4,8 @@ import { Suspense } from "react"
 import { CollectionFallback } from "@/components/CollectionFallback"
 import { JsonLd } from "@/components/JsonLd"
 import { OracoesCollection } from "@/components/oracoes/OracoesCollection"
-import { Badge } from "@/components/ui/badge"
+import { Container } from "@/components/layout/Container"
+import { PageHeader } from "@/components/layout/PageHeader"
 import { oracoes } from "@/data/oracoes"
 import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
 
@@ -28,28 +29,20 @@ export default function OracoesPage() {
   })
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+    <>
       <JsonLd data={pageSchema} />
 
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-        <Badge
-          variant="secondary"
-          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
-        >
-          Vida de oração
-        </Badge>
-        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
-          Orações
-        </h1>
-        <div className="my-2 h-px w-12 bg-border/50" />
-        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-          Uma coleção de orações católicas organizadas por tema, para leitura simples e acesso rápido.
-        </p>
-      </header>
+      <PageHeader
+        kicker="Vida de oração"
+        title="Orações"
+        description="Uma coleção de orações católicas organizadas por tema, para leitura simples e acesso rápido."
+      />
 
-      <Suspense fallback={<CollectionFallback />}>
-        <OracoesCollection oracoes={oracoes} />
-      </Suspense>
-    </div>
+      <Container className="section-y flex flex-col gap-14">
+        <Suspense fallback={<CollectionFallback />}>
+          <OracoesCollection oracoes={oracoes} />
+        </Suspense>
+      </Container>
+    </>
   )
 }

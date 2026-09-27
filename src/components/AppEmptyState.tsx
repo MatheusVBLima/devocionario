@@ -11,6 +11,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { cn } from "@/lib/utils"
 
 type AppEmptyStateProps = {
   title: string
@@ -30,7 +31,7 @@ export function AppEmptyState({
   className,
 }: AppEmptyStateProps) {
   return (
-    <Empty className={className ?? "border border-dashed border-border/80 bg-muted/20"}>
+    <Empty className={cn("rounded-sm border border-dashed py-14", className)}>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Icon className="size-5" />

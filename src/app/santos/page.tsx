@@ -4,7 +4,8 @@ import { Suspense } from "react"
 import { CollectionFallback } from "@/components/CollectionFallback"
 import { JsonLd } from "@/components/JsonLd"
 import { SantosCollection } from "@/components/santos/SantosCollection"
-import { Badge } from "@/components/ui/badge"
+import { Container } from "@/components/layout/Container"
+import { PageHeader } from "@/components/layout/PageHeader"
 import { santos } from "@/data/santos"
 import { buildCollectionPageSchema, buildMetadata } from "@/lib/seo"
 
@@ -44,28 +45,20 @@ export default function SantosPage() {
   })
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-4 py-20 md:px-6 lg:px-10 lg:py-32">
+    <>
       <JsonLd data={pageSchema} />
 
-      <header className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-        <Badge
-          variant="secondary"
-          className="rounded-full px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
-        >
-          Calendário litúrgico
-        </Badge>
-        <h1 className="text-balance font-serif text-5xl font-light tracking-tight sm:text-6xl lg:text-7xl">
-          Calendário dos Santos
-        </h1>
-        <div className="my-2 h-px w-12 bg-border/50" />
-        <p className="max-w-2xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
-          Conheça os santos celebrados ao longo do ano com acesso rápido a biografias e orações.
-        </p>
-      </header>
+      <PageHeader
+        kicker="Calendário litúrgico"
+        title="Calendário dos Santos"
+        description="Conheça os santos celebrados ao longo do ano com acesso rápido a biografias e orações."
+      />
 
-      <Suspense fallback={<CollectionFallback />}>
-        <SantosCollection santos={santos} months={[...months]} />
-      </Suspense>
-    </div>
+      <Container className="section-y flex flex-col gap-14">
+        <Suspense fallback={<CollectionFallback />}>
+          <SantosCollection santos={santos} months={[...months]} />
+        </Suspense>
+      </Container>
+    </>
   )
 }

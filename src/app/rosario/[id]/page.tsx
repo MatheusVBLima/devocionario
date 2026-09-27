@@ -3,7 +3,8 @@ import { notFound } from "next/navigation"
 
 import { BreadcrumbNav } from "@/components/BreadcrumbNav"
 import { JsonLd } from "@/components/JsonLd"
-import { Badge } from "@/components/ui/badge"
+import { Container } from "@/components/layout/Container"
+import { Kicker } from "@/components/layout/Kicker"
 import { getRosarioMystery, rosarioMysteries } from "@/data/rosario"
 import { canonicalUrl } from "@/lib/routes"
 import {
@@ -70,58 +71,82 @@ export default async function RosarioDetailPage({ params }: RosarioDetailProps) 
   })
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
+    <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={pageSchema} />
       <BreadcrumbNav items={breadcrumbItems} />
 
-      <header className="space-y-4">
-        <Badge variant="secondary" className="w-fit">
-          {mystery.dias}
-        </Badge>
-        <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-          {mystery.nome}
-        </h1>
-        <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
-          {mystery.descricao}
-        </p>
+      <header className="border-b">
+        <Container className="grid items-end gap-8 pt-[clamp(2rem,5vw,4rem)] pb-[clamp(2.5rem,6vw,5rem)] lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)] lg:gap-16">
+          <div>
+            <Kicker>{mystery.dias}</Kicker>
+            <h1 className="text-display mt-7 text-[clamp(3rem,7.5vw,6.5rem)]">{mystery.nome}</h1>
+          </div>
+          <p className="text-lg leading-relaxed text-pretty text-muted-foreground lg:pb-3">
+            {mystery.descricao}
+          </p>
+        </Container>
       </header>
 
-      <section className="space-y-4 rounded-[2rem] border border-border/70 bg-card/70 p-6">
-        <h2 className="text-2xl font-semibold">Como rezar o Rosário</h2>
-        <ol className="list-decimal space-y-3 pl-5 leading-8 text-muted-foreground">
-          <li>Comece com o sinal da cruz e o Credo.</li>
-          <li>Reze um Pai-Nosso, três Ave-Marias e um Glória.</li>
-          <li>Anuncie cada mistério antes de iniciar a dezena correspondente.</li>
-          <li>Em cada mistério, reze um Pai-Nosso, dez Ave-Marias e um Glória.</li>
-          <li>Finalize com a Salve Rainha e suas intenções pessoais.</li>
-        </ol>
-      </section>
+      <Container className="section-y grid gap-14 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)] lg:gap-20">
+        <aside className="lg:sticky lg:top-32 lg:self-start">
+          <section className="flex flex-col gap-5 rounded-md bg-card p-7">
+            <h2 className="font-serif text-3xl leading-tight">Como rezar o Rosário</h2>
+            <ol className="flex flex-col gap-3 text-[15px] leading-relaxed text-muted-foreground">
+              {[
+                "Comece com o sinal da cruz e o Credo.",
+                "Reze um Pai-Nosso, três Ave-Marias e um Glória.",
+                "Anuncie cada mistério antes de iniciar a dezena correspondente.",
+                "Em cada mistério, reze um Pai-Nosso, dez Ave-Marias e um Glória.",
+                "Finalize com a Salve Rainha e suas intenções pessoais.",
+              ].map((step, index) => (
+                <li key={step} className="grid grid-cols-[1.75rem_1fr] gap-2">
+                  <span className="font-mono text-[13px] text-liturgical-ink">{index + 1}.</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        </aside>
 
-      <section className="space-y-6">
-        <h2 className="text-2xl font-semibold">Os cinco mistérios</h2>
-        <div className="space-y-6">
-          {mystery.misteriosDetalhados.map((detail, index) => (
-            <article
-              key={detail.titulo}
-              className="space-y-4 rounded-[2rem] border border-border/70 bg-card/70 p-6"
-            >
-              <h3 className="text-xl font-semibold">
-                {index + 1}. {detail.titulo}
-              </h3>
-              <p className="leading-8 text-muted-foreground">{detail.descricao}</p>
-              <div className="space-y-2">
-                <h4 className="font-semibold">Reflexão</h4>
-                <p className="leading-8 text-muted-foreground">{detail.reflexao}</p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-semibold">Oração</h4>
-                <p className="leading-8 text-muted-foreground">{detail.oracao}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    </div>
+        <section className="flex flex-col">
+          <h2 className="mb-8 font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
+            Os cinco mistérios
+          </h2>
+          <ol className="flex flex-col border-b">
+            {mystery.misteriosDetalhados.map((detail, index) => (
+              <li key={detail.titulo} className="grid gap-6 border-t py-10 sm:grid-cols-[5rem_1fr]">
+                <div className="flex flex-col gap-3">
+                  <span className="font-mono text-[13px] text-liturgical-ink">{index + 1}º</span>
+                  <span aria-hidden className="flex flex-wrap gap-1 sm:max-w-[3.25rem]">
+                    {Array.from({ length: 10 }, (_, bead) => (
+                      <span key={bead} className="size-[5px] rounded-full bg-liturgical" />
+                    ))}
+                  </span>
+                </div>
+                <article className="flex flex-col gap-5">
+                  <h3 className="font-serif text-[clamp(2rem,3.4vw,2.75rem)] leading-[1.05]">
+                    {detail.titulo}
+                  </h3>
+                  <p className="text-lg leading-relaxed">{detail.descricao}</p>
+                  <div className="flex flex-col gap-2">
+                    <h4 className="font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                      Reflexão
+                    </h4>
+                    <p className="leading-relaxed text-muted-foreground">{detail.reflexao}</p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h4 className="font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                      Oração
+                    </h4>
+                    <p className="font-serif text-2xl leading-snug italic">{detail.oracao}</p>
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </Container>
+    </>
   )
 }
