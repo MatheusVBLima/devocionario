@@ -1,0 +1,146 @@
+{
+  "viewport": {
+    "width": 400,
+    "height": 860
+  },
+  "scale": 3,
+  "shots": {
+    "home": {
+      "src": "shots/home.jpg",
+      "height": 3400
+    },
+    "home-dolorosos": {
+      "src": "shots/home-dolorosos.jpg",
+      "height": 3400
+    },
+    "home-coroacao": {
+      "src": "shots/home-coroacao.jpg",
+      "height": 3400
+    },
+    "liturgia": {
+      "src": "shots/liturgia.jpg",
+      "height": 1600
+    },
+    "liturgia-evangelho": {
+      "src": "shots/liturgia-evangelho.jpg",
+      "height": 1600
+    },
+    "oracoes": {
+      "src": "shots/oracoes.jpg",
+      "height": 2200
+    },
+    "oracoes-busca-1": {
+      "src": "shots/oracoes-busca-1.jpg",
+      "height": 1400
+    },
+    "oracoes-busca-2": {
+      "src": "shots/oracoes-busca-2.jpg",
+      "height": 1400
+    },
+    "oracoes-busca-3": {
+      "src": "shots/oracoes-busca-3.jpg",
+      "height": 1400
+    },
+    "oracoes-busca-4": {
+      "src": "shots/oracoes-busca-4.jpg",
+      "height": 1400
+    },
+    "oracoes-busca-5": {
+      "src": "shots/oracoes-busca-5.jpg",
+      "height": 1400
+    },
+    "oracoes-busca-6": {
+      "src": "shots/oracoes-busca-6.jpg",
+      "height": 2200
+    },
+    "rotina-0": {
+      "src": "shots/rotina-0.jpg",
+      "height": 3400
+    },
+    "rotina-1": {
+      "src": "shots/rotina-1.jpg",
+      "height": 3400
+    },
+    "rotina-2": {
+      "src": "shots/rotina-2.jpg",
+      "height": 3400
+    },
+    "tema-menu": {
+      "src": "shots/tema-menu.jpg",
+      "height": 1200
+    },
+    "home-escuro": {
+      "src": "shots/home-escuro.jpg",
+      "height": 1200
+    },
+    "tema-menu-escuro": {
+      "src": "shots/tema-menu-escuro.jpg",
+      "height": 1200
+    },
+    "home-advento": {
+      "src": "shots/home-advento.jpg",
+      "height": 1200
+    }
+  },
+  "points": {
+    "header": {
+      "height": 84
+    },
+    "rosarioTitle": {
+      "x": 200,
+      "y": 2092,
+      "top": 2069
+    },
+    "dolorosos": {
+      "x": 178,
+      "y": 2162,
+      "top": 2142
+    },
+    "coroacao": {
+      "x": 200,
+      "y": 2657,
+      "top": 2622
+    },
+    "evangelho": {
+      "x": 99,
+      "y": 500,
+      "top": 480
+    },
+    "busca": {
+      "x": 200,
+      "y": 444,
+      "top": 422
+    },
+    "dicas": {
+      "x": 156,
+      "y": 2160,
+      "top": 2140
+    },
+    "tip1": {
+      "x": 351,
+      "y": 2335,
+      "top": 2326
+    },
+    "tip2": {
+      "x": 351,
+      "y": 2523,
+      "top": 2514
+    },
+    "tema": {
+      "x": 296,
+      "y": 45,
+      "top": 27
+    },
+    "escuro": {
+      "x": 204,
+      "y": 157,
+      "top": 139
+    },
+    "advento": {
+      "x": 204,
+      "y": 329,
+      "top": 302
+    }
+  },
+  "query": "Miguel"
+}
