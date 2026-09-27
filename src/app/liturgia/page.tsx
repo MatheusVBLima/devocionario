@@ -48,7 +48,6 @@ export default async function LiturgiaPage() {
             </p>
             <p className="font-serif text-3xl leading-tight text-balance">{liturgia.liturgia}</p>
             <p className="flex items-center gap-2.5 text-sm text-muted-foreground">
-              <span aria-hidden className="size-2.5 rounded-full bg-liturgical" />
               Cor litúrgica: {liturgia.cor}
             </p>
           </div>
