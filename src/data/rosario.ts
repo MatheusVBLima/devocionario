@@ -213,3 +213,18 @@ export const rosarioMysteries: RosarioMystery[] = [
 export function getRosarioMystery(id: string) {
   return rosarioMysteries.find((mystery) => mystery.id === id)
 }
+
+const mysteryIdByWeekday = [
+  "gloriosos", // domingo
+  "gozosos", // segunda
+  "dolorosos", // terça
+  "gloriosos", // quarta
+  "luminosos", // quinta
+  "dolorosos", // sexta
+  "gozosos", // sábado
+] as const
+
+/** Conjunto de mistérios rezado no dia da semana (0 = domingo). */
+export function getRosarioMysteryForWeekday(weekday: number) {
+  return getRosarioMystery(mysteryIdByWeekday[weekday] ?? "gloriosos") ?? rosarioMysteries[0]
+}

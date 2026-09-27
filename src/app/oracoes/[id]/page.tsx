@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { BreadcrumbNav } from "@/components/BreadcrumbNav"
 import { JsonLd } from "@/components/JsonLd"
+import { Container } from "@/components/layout/Container"
 import { OracaoContent } from "@/components/OracaoContent"
+import { PrefetchLink } from "@/components/PrefetchLink"
 import { Button } from "@/components/ui/button"
 import { oracoes } from "@/data/oracoes"
 import { canonicalUrl } from "@/lib/routes"
@@ -73,18 +74,20 @@ export default async function OracaoPage({ params }: OracaoPageProps) {
   })
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-16 md:px-6 lg:py-24">
+    <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={pageSchema} />
       <BreadcrumbNav items={breadcrumbItems} />
 
-      <OracaoContent oracao={oracao} />
+      <Container className="section-y flex max-w-[900px] flex-col gap-12">
+        <OracaoContent oracao={oracao} />
 
-      <div className="flex justify-center">
-        <Button asChild variant="secondary">
-          <Link href="/oracoes">Ver todas as orações</Link>
-        </Button>
-      </div>
-    </div>
+        <div>
+          <Button asChild variant="secondary">
+            <PrefetchLink href="/oracoes">Ver todas as orações</PrefetchLink>
+          </Button>
+        </div>
+      </Container>
+    </>
   )
 }

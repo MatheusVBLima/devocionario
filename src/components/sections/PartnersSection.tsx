@@ -1,42 +1,40 @@
 import Image from "next/image"
 
+import { Container } from "@/components/layout/Container"
+import { Kicker } from "@/components/layout/Kicker"
 import { homePartners } from "@/data/home"
-import { Wrapper } from "@/components/utils/Wrapper"
 
 export function PartnersSection() {
   return (
-    <section className="home-section">
-      <Wrapper className="space-y-10">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
-          <span className="section-kicker">Rede de apoio</span>
-          <h2 className="text-balance font-serif text-3xl font-light tracking-tight sm:text-4xl">
+    <section className="border-t bg-card/50">
+      <Container className="section-y">
+        <div className="mb-12 flex flex-col gap-6">
+          <Kicker>Rede de apoio</Kicker>
+          <h2 className="text-display max-w-4xl text-[clamp(2.5rem,5vw,4.25rem)] leading-none">
             Comunidades e iniciativas que fortalecem a presença católica no ambiente digital.
           </h2>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-x-5 gap-y-12 sm:gap-x-8 lg:grid-cols-4">
           {homePartners.map((partner) => (
-            <article
-              key={partner.name}
-              className="flex h-full flex-col items-center gap-4 rounded-[1.75rem] border border-border/70 bg-card/75 px-6 py-8 text-center"
-            >
-              <div className="relative size-24 overflow-hidden rounded-full border border-border/70 bg-slate-100 dark:bg-slate-200">
+            <li key={partner.name} className="flex flex-col gap-5">
+              <div className="arch relative aspect-[4/5] overflow-hidden border bg-white">
                 <Image
                   src={partner.image}
                   alt={partner.name}
                   fill
-                  className="object-cover object-top"
-                  sizes="96px"
+                  className="object-contain p-6 pt-10"
+                  sizes="(max-width: 1024px) 45vw, 280px"
                 />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold">{partner.name}</h3>
-                <p className="text-sm leading-7 text-muted-foreground">{partner.description}</p>
+              <div className="flex flex-col gap-2 border-t border-foreground pt-4">
+                <h3 className="font-serif text-[1.4rem] leading-[1.1] sm:text-[1.75rem]">{partner.name}</h3>
+                <p className="text-[15px] leading-relaxed text-muted-foreground">{partner.description}</p>
               </div>
-            </article>
+            </li>
           ))}
-        </div>
-      </Wrapper>
+        </ul>
+      </Container>
     </section>
   )
 }

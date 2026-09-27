@@ -1,59 +1,24 @@
 "use client"
 
-import { useState } from "react"
+import type { ReactNode } from "react"
 
 import { AppEmptyState } from "@/components/AppEmptyState"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-type LiturgiaLeitura = {
-  referencia: string
-  titulo?: string
-  refrao?: string
-  texto: string
-}
-
-type LiturgiaData = {
-  oracoes: {
-    coleta: string
-    oferendas: string
-    comunhao: string
-    extras: string[]
-  }
-  leituras: {
-    primeiraLeitura: LiturgiaLeitura[]
-    salmo: LiturgiaLeitura[]
-    segundaLeitura: LiturgiaLeitura[]
-    evangelho: LiturgiaLeitura[]
-  }
-  antifonas: {
-    entrada: string
-    comunhao: string
-  }
-}
+import { getValidReading, hasText, splitVerses, type LiturgiaData } from "@/lib/liturgia"
 
 type LiturgiaTabsProps = {
-  liturgia: LiturgiaData
+  liturgia: Pick<LiturgiaData, "oracoes" | "leituras" | "antifonas">
 }
 
-function hasText(value?: string | null) {
-  return Boolean(value?.trim())
-}
-
-function getValidReading(readings: LiturgiaLeitura[]) {
-  return readings.find(
-    (reading) =>
-      hasText(reading.referencia) ||
-      hasText(reading.titulo) ||
-      hasText(reading.refrao) ||
-      hasText(reading.texto)
+function VerseText({ text }: { text: string }) {
+  return splitVerses(text).map((part, index) =>
+    index % 2 === 1 ? (
+      <sup key={index} className="mr-0.5 font-mono text-[0.6em] text-liturgical-ink">
+        {part.replace(/\s+/g, "")}
+      </sup>
+    ) : (
+      part
+    ),
   )
 }
 
@@ -69,61 +34,58 @@ function ReadingCard({
   response?: { primary: string; secondary: string }
 }) {
   return (
-    <div className="mx-auto max-w-prose rounded-[2rem] border border-transparent bg-muted/30 px-6 py-10 transition-all duration-500 hover:bg-muted/50 sm:px-12 sm:py-14">
-      <div className="mb-8 text-center">
-        <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          {title}
-        </h2>
-        {description ? <p className="mt-2 text-lg italic text-muted-foreground">{description}</p> : null}
-        <div className="mx-auto mt-8 h-px w-16 bg-border/50" />
-      </div>
-      <div className="mb-10 whitespace-pre-line text-lg leading-loose text-foreground sm:text-xl sm:leading-loose">
-        {text}
+    <article className="mx-auto max-w-[68ch]">
+      <header className="mb-10 flex flex-col gap-3 border-b pb-8">
+        <h2 className="text-display text-[clamp(2.5rem,5vw,4rem)] leading-none">{title}</h2>
+        {description ? (
+          <p className="font-serif text-xl text-balance text-muted-foreground italic">{description}</p>
+        ) : null}
+      </header>
+      <div className="text-lg leading-[1.85] whitespace-pre-line sm:text-xl sm:leading-[1.85]">
+        <VerseText text={text} />
       </div>
       {response ? (
-        <div className="flex flex-col items-center gap-2 text-center text-lg italic text-red-700/80 dark:text-red-400/80 sm:text-xl">
+        <div className="mt-10 flex flex-col gap-1 border-t pt-6 font-serif text-2xl text-liturgical-ink italic">
           <p>— {response.primary}</p>
-          <p className="font-semibold">— {response.secondary}</p>
+          <p>— {response.secondary}</p>
         </div>
       ) : null}
-    </div>
+    </article>
   )
 }
 
-export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
-  const [activeTab, setActiveTab] = useState("primeira")
+function PrayerBlock({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="flex flex-col gap-4 border-t pt-6">
+      <h3 className="font-mono text-xs tracking-[0.08em] text-liturgical-ink uppercase">{title}</h3>
+      <div className="flex flex-col gap-4 text-lg leading-[1.85] sm:text-xl sm:leading-[1.85]">
+        {children}
+      </div>
+    </section>
+  )
+}
 
+function Unavailable({ title, description }: { title: string; description: string }) {
+  return <AppEmptyState title={title} description={description} />
+}
+
+export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
   const primeiraLeitura = getValidReading(liturgia.leituras.primeiraLeitura)
   const salmo = getValidReading(liturgia.leituras.salmo)
   const segundaLeitura = getValidReading(liturgia.leituras.segundaLeitura)
   const evangelho = getValidReading(liturgia.leituras.evangelho)
+  const extras = liturgia.oracoes.extras.filter((item) => hasText(item))
   const hasOracoes =
     hasText(liturgia.oracoes.coleta) ||
     hasText(liturgia.oracoes.oferendas) ||
     hasText(liturgia.oracoes.comunhao) ||
-    liturgia.oracoes.extras.some((item) => hasText(item))
+    extras.length > 0
   const hasAntifonas =
     hasText(liturgia.antifonas.entrada) || hasText(liturgia.antifonas.comunhao)
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-      <div className="block md:hidden">
-        <Select value={activeTab} onValueChange={setActiveTab}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecione uma leitura" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="primeira">Primeira leitura</SelectItem>
-            <SelectItem value="salmo">Salmo</SelectItem>
-            <SelectItem value="segunda">Segunda leitura</SelectItem>
-            <SelectItem value="evangelho">Evangelho</SelectItem>
-            <SelectItem value="oracoes">Orações</SelectItem>
-            <SelectItem value="antifonas">Antífonas</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <TabsList className="hidden h-auto w-full grid-cols-6 md:grid">
+    <Tabs defaultValue="primeira" className="gap-14">
+      <TabsList aria-label="Partes da liturgia" className="mx-auto justify-center">
         <TabsTrigger value="primeira">Primeira leitura</TabsTrigger>
         <TabsTrigger value="salmo">Salmo</TabsTrigger>
         <TabsTrigger value="segunda">Segunda leitura</TabsTrigger>
@@ -138,32 +100,23 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
             title={primeiraLeitura.referencia}
             description={primeiraLeitura.titulo}
             text={primeiraLeitura.texto}
-            response={{
-              primary: "Palavra do Senhor.",
-              secondary: "Graças a Deus.",
-            }}
+            response={{ primary: "Palavra do Senhor.", secondary: "Graças a Deus." }}
           />
         ) : (
-          <AppEmptyState
+          <Unavailable
             title="Primeira leitura indisponível"
             description="A primeira leitura não está disponível na liturgia de hoje."
-            className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
       </TabsContent>
 
       <TabsContent value="salmo">
         {salmo ? (
-          <ReadingCard
-            title={salmo.referencia}
-            description={salmo.refrao}
-            text={salmo.texto}
-          />
+          <ReadingCard title={salmo.referencia} description={salmo.refrao} text={salmo.texto} />
         ) : (
-          <AppEmptyState
+          <Unavailable
             title="Salmo indisponível"
             description="O salmo não está disponível na liturgia de hoje."
-            className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
       </TabsContent>
@@ -174,16 +127,12 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
             title={segundaLeitura.referencia}
             description={segundaLeitura.titulo}
             text={segundaLeitura.texto}
-            response={{
-              primary: "Palavra do Senhor.",
-              secondary: "Graças a Deus.",
-            }}
+            response={{ primary: "Palavra do Senhor.", secondary: "Graças a Deus." }}
           />
         ) : (
-          <AppEmptyState
+          <Unavailable
             title="Segunda leitura indisponível"
             description="A segunda leitura não está disponível na liturgia de hoje."
-            className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
       </TabsContent>
@@ -194,112 +143,70 @@ export function LiturgiaTabs({ liturgia }: LiturgiaTabsProps) {
             title={evangelho.referencia}
             description={evangelho.titulo}
             text={evangelho.texto}
-            response={{
-              primary: "Palavra da Salvação.",
-              secondary: "Glória a vós, Senhor.",
-            }}
+            response={{ primary: "Palavra da Salvação.", secondary: "Glória a vós, Senhor." }}
           />
         ) : (
-          <AppEmptyState
+          <Unavailable
             title="Evangelho indisponível"
             description="O evangelho não está disponível na liturgia de hoje."
-            className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
       </TabsContent>
 
       <TabsContent value="oracoes">
         {hasOracoes ? (
-          <div className="mx-auto max-w-prose rounded-[2rem] border border-transparent bg-muted/30 px-6 py-10 transition-all duration-500 hover:bg-muted/50 sm:px-12 sm:py-14">
-            <div className="mb-12 text-center">
-              <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                Orações do dia
-              </h2>
-              <div className="mx-auto mt-8 h-px w-16 bg-border/50" />
-            </div>
-            <div className="space-y-12 text-lg leading-loose sm:text-xl sm:leading-loose">
-              {hasText(liturgia.oracoes.coleta) ? (
-                <div>
-                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
-                    Oração da coleta
-                  </h3>
-                  <p className="text-foreground">{liturgia.oracoes.coleta}</p>
-                </div>
-              ) : null}
-              {hasText(liturgia.oracoes.oferendas) ? (
-                <div>
-                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
-                    Oração sobre as oferendas
-                  </h3>
-                  <p className="text-foreground">{liturgia.oracoes.oferendas}</p>
-                </div>
-              ) : null}
-              {hasText(liturgia.oracoes.comunhao) ? (
-                <div>
-                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
-                    Oração depois da comunhão
-                  </h3>
-                  <p className="text-foreground">{liturgia.oracoes.comunhao}</p>
-                </div>
-              ) : null}
-              {liturgia.oracoes.extras.some((item) => hasText(item)) ? (
-                <div>
-                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
-                    Orações extras
-                  </h3>
-                  <div className="space-y-4 text-foreground">
-                    {liturgia.oracoes.extras
-                      .filter((item) => hasText(item))
-                      .map((item, index) => (
-                        <p key={index}>{item}</p>
-                      ))}
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          </div>
+          <article className="mx-auto flex max-w-[68ch] flex-col gap-10">
+            <h2 className="text-display text-[clamp(2.5rem,5vw,4rem)] leading-none">Orações do dia</h2>
+            {hasText(liturgia.oracoes.coleta) ? (
+              <PrayerBlock title="Oração da coleta">
+                <p>{liturgia.oracoes.coleta}</p>
+              </PrayerBlock>
+            ) : null}
+            {hasText(liturgia.oracoes.oferendas) ? (
+              <PrayerBlock title="Oração sobre as oferendas">
+                <p>{liturgia.oracoes.oferendas}</p>
+              </PrayerBlock>
+            ) : null}
+            {hasText(liturgia.oracoes.comunhao) ? (
+              <PrayerBlock title="Oração depois da comunhão">
+                <p>{liturgia.oracoes.comunhao}</p>
+              </PrayerBlock>
+            ) : null}
+            {extras.length ? (
+              <PrayerBlock title="Orações extras">
+                {extras.map((item, index) => (
+                  <p key={index}>{item}</p>
+                ))}
+              </PrayerBlock>
+            ) : null}
+          </article>
         ) : (
-          <AppEmptyState
+          <Unavailable
             title="Orações indisponíveis"
             description="As orações desta celebração não estão disponíveis na liturgia de hoje."
-            className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
       </TabsContent>
 
       <TabsContent value="antifonas">
         {hasAntifonas ? (
-          <div className="mx-auto max-w-prose rounded-[2rem] border border-transparent bg-muted/30 px-6 py-10 transition-all duration-500 hover:bg-muted/50 sm:px-12 sm:py-14">
-            <div className="mb-12 text-center">
-              <h2 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                Antífonas
-              </h2>
-              <div className="mx-auto mt-8 h-px w-16 bg-border/50" />
-            </div>
-            <div className="space-y-12 text-lg leading-loose sm:text-xl sm:leading-loose">
-              {hasText(liturgia.antifonas.entrada) ? (
-                <div>
-                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
-                    Antífona de entrada
-                  </h3>
-                  <p className="text-foreground">{liturgia.antifonas.entrada}</p>
-                </div>
-              ) : null}
-              {hasText(liturgia.antifonas.comunhao) ? (
-                <div>
-                  <h3 className="mb-4 text-center text-sm font-bold uppercase tracking-widest text-red-700/80 dark:text-red-400/80">
-                    Antífona da comunhão
-                  </h3>
-                  <p className="text-foreground">{liturgia.antifonas.comunhao}</p>
-                </div>
-              ) : null}
-            </div>
-          </div>
+          <article className="mx-auto flex max-w-[68ch] flex-col gap-10">
+            <h2 className="text-display text-[clamp(2.5rem,5vw,4rem)] leading-none">Antífonas</h2>
+            {hasText(liturgia.antifonas.entrada) ? (
+              <PrayerBlock title="Antífona de entrada">
+                <p>{liturgia.antifonas.entrada}</p>
+              </PrayerBlock>
+            ) : null}
+            {hasText(liturgia.antifonas.comunhao) ? (
+              <PrayerBlock title="Antífona da comunhão">
+                <p>{liturgia.antifonas.comunhao}</p>
+              </PrayerBlock>
+            ) : null}
+          </article>
         ) : (
-          <AppEmptyState
+          <Unavailable
             title="Antífonas indisponíveis"
             description="As antífonas desta celebração não estão disponíveis na liturgia de hoje."
-            className="border border-dashed border-border/80 bg-muted/20 py-12"
           />
         )}
       </TabsContent>

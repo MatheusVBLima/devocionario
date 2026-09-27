@@ -1,22 +1,12 @@
 "use client"
 
-import Link from "next/link"
 import { useQueryStates } from "nuqs"
 import { Newspaper } from "lucide-react"
 
 import { AppEmptyState } from "@/components/AppEmptyState"
 import { CollectionPagination } from "@/components/CollectionPagination"
 import { CollectionFilters } from "@/components/filters/CollectionFilters"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { PrefetchLink } from "@/components/PrefetchLink"
 import type { BlogPost } from "@/data/blog"
 import {
   collectionCategoryParser,
@@ -96,43 +86,33 @@ export function BlogCollection({ posts }: BlogCollectionProps) {
       />
 
       {currentPosts.length ? (
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {currentPosts.map((post, index) => (
-            <Card
-              key={post.id}
-              className={`group flex h-full flex-col overflow-hidden rounded-[2rem] border-transparent bg-muted/30 p-2 transition-all duration-500 hover:bg-muted/50 ${
-                index === 0 ? "md:col-span-2" : ""
-              }`}
-            >
-              <CardHeader className="space-y-4 px-6 pt-6">
-                <div className="flex items-start justify-between gap-3">
-                  <Badge variant="outline" className="border-border/50 bg-background/50">
-                    {post.category}
-                  </Badge>
-                  <span className="text-xs font-medium text-muted-foreground">{post.date}</span>
-                </div>
-                <CardTitle className="line-clamp-2 text-xl leading-tight">{post.title}</CardTitle>
-                <CardDescription className="line-clamp-3 text-sm leading-6">
-                  {post.summary}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="flex-1 px-6">
-                <p className="text-sm text-muted-foreground">
-                  Por <span className="font-medium text-foreground">{post.author}</span>
-                </p>
-              </CardContent>
-
-              <CardFooter className="px-6 pb-6">
-                <Button asChild className="w-full">
-                  <Link href={`/blog/${post.id}`}>
-                    Ler artigo
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
+        <ul className="flex flex-col border-b">
+          {currentPosts.map((post) => (
+            <li key={post.id}>
+              <PrefetchLink
+                href={`/blog/${post.id}`}
+                className="group grid gap-x-10 gap-y-3 border-t py-8 md:grid-cols-[10rem_minmax(0,1.3fr)_minmax(0,1fr)]"
+              >
+                <span className="flex flex-col gap-1 font-mono text-xs tracking-[0.08em] uppercase">
+                  <span className="text-liturgical-ink">{post.category}</span>
+                  <span className="text-muted-foreground">{post.date}</span>
+                </span>
+                <h2 className="font-serif text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.05] text-balance group-hover:text-liturgical-ink">
+                  {post.title}
+                </h2>
+                <span className="flex flex-col gap-3">
+                  <span className="line-clamp-3 text-[15px] leading-relaxed text-muted-foreground">
+                    {post.summary}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    Por <span className="font-medium text-foreground">{post.author}</span>
+                  </span>
+                  <span className="text-sm font-medium">Ler artigo →</span>
+                </span>
+              </PrefetchLink>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
         <AppEmptyState
           title="Nenhum artigo encontrado"

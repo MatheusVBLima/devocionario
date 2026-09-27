@@ -1,34 +1,47 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { useState } from "react";
+import Image from "next/image"
+import { useState } from "react"
 
 interface SantoImageProps {
-  src: string;
-  alt: string;
-  className?: string;
-  sizes?: string;
+  src?: string | null
+  alt: string
+  className?: string
+  sizes?: string
 }
 
-export function SantoImage({ src, alt, className, sizes }: SantoImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
-  const [hasError, setHasError] = useState(false);
+function initialsOf(name: string) {
+  return name
+    .replace(/^(São|Santa|Santo|Santos|Beato|Beata|Nossa Senhora)\s+/i, "")
+    .trim()
+    .charAt(0)
+    .toUpperCase()
+}
 
-  const handleError = () => {
-    if (!hasError) {
-      setImgSrc("/placeholder.svg?height=600&width=400");
-      setHasError(true);
-    }
-  };
+/** Imagem do santo com fallback tipográfico quando a imagem falta ou não carrega. */
+export function SantoImage({ src, alt, className, sizes }: SantoImageProps) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null)
+
+  if (!src || src.startsWith("/placeholder") || failedSrc === src) {
+    return (
+      <div
+        role="img"
+        aria-label={alt}
+        className="absolute inset-0 flex items-center justify-center bg-card font-serif text-[clamp(4rem,10vw,7rem)] text-liturgical-ink/70 italic"
+      >
+        {initialsOf(alt)}
+      </div>
+    )
+  }
 
   return (
     <Image
-      src={imgSrc}
+      src={src}
       alt={alt}
       fill
-      className={className || "object-cover rounded-lg"}
+      className={className || "object-cover"}
       sizes={sizes ?? "(max-width: 1024px) 100vw, 33vw"}
-      onError={handleError}
+      onError={() => setFailedSrc(src)}
     />
-  );
-} 
+  )
+}

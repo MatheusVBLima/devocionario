@@ -5,7 +5,7 @@ export const siteConfig = {
   description:
     "Portal católico com orações, liturgia diária, santos e conteúdos para fortalecer a vida espiritual.",
   locale: "pt-BR",
-  themeColor: "#f6f1e7",
+  themeColor: "#f5f4f0",
   ogImage: "/opengraph-image",
   ogImageAlt:
     "Devocionário com orações, liturgia diária, santos e conteúdo católico para compartilhar.",

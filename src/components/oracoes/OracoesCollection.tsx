@@ -1,16 +1,13 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
 import { HandHeart } from "lucide-react"
 import { useQueryStates } from "nuqs"
 
 import { AppEmptyState } from "@/components/AppEmptyState"
 import { CollectionPagination } from "@/components/CollectionPagination"
 import { CollectionFilters } from "@/components/filters/CollectionFilters"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { PrefetchLink } from "@/components/PrefetchLink"
 import type { Oracao } from "@/data/oracoes"
 import {
   collectionCategoryParser,
@@ -100,54 +97,40 @@ export function OracoesCollection({ oracoes }: OracoesCollectionProps) {
       />
 
       {currentOracoes.length ? (
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {currentOracoes.map((oracao, index) => (
-            <Card
-              key={oracao.id}
-              className={`group flex h-full flex-col overflow-hidden rounded-[2rem] border-transparent bg-muted/30 p-2 transition-all duration-500 hover:bg-muted/50 ${
-                index === 0 ? "md:col-span-2" : ""
-              }`}
-            >
-              {oracao.imageUrl ? (
-                <div className="pb-0">
-                  <div
-                    className={`relative w-full overflow-hidden rounded-[1.5rem] bg-muted ${
-                      index === 0 ? "aspect-[16/9] md:aspect-[21/9]" : "aspect-[16/10]"
-                    }`}
-                  >
+        <ul className="grid gap-x-8 gap-y-14 md:grid-cols-2 xl:grid-cols-3">
+          {currentOracoes.map((oracao) => (
+            <li key={oracao.id}>
+              <PrefetchLink
+                href={`/oracoes/${oracao.id}`}
+                className="group flex h-full flex-col gap-4 border-t border-foreground pt-5"
+              >
+                {oracao.imageUrl ? (
+                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-md bg-card">
                     <Image
                       src={oracao.imageUrl}
                       alt={oracao.title}
                       fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 380px"
                     />
                   </div>
-                </div>
-              ) : null}
-
-              <CardHeader className="space-y-4 px-6 pt-6">
-                <CardTitle className="line-clamp-2 text-xl">{oracao.title}</CardTitle>
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className="border-border/50 bg-background/50">
-                    {oracao.category}
-                  </Badge>
-                  <Badge variant="secondary">{estimateReadingTime(oracao.content)}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="flex-1 px-6">
-                <p className="line-clamp-4 text-sm leading-6 text-muted-foreground">
+                ) : null}
+                <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs tracking-[0.08em] uppercase">
+                  <span className="text-liturgical-ink">{oracao.category}</span>
+                  <span aria-hidden className="text-muted-foreground">·</span>
+                  <span className="text-muted-foreground">{estimateReadingTime(oracao.content)}</span>
+                </span>
+                <h2 className="line-clamp-2 font-serif text-[1.9rem] leading-[1.05] group-hover:text-liturgical-ink">
+                  {oracao.title}
+                </h2>
+                <p className="line-clamp-3 text-[15px] leading-relaxed text-muted-foreground">
                   {oracao.content.replace(/\n/g, " ").replace(/\*\*/g, "")}
                 </p>
-              </CardContent>
-              <CardFooter className="px-6 pb-6">
-                <Button asChild className="w-full">
-                  <Link href={`/oracoes/${oracao.id}`}>Ver oração</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+                <span className="mt-auto text-sm font-medium">Ver oração →</span>
+              </PrefetchLink>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
         <AppEmptyState
           title="Nenhuma oração encontrada"

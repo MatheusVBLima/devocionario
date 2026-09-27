@@ -1,43 +1,47 @@
+import { Container } from "@/components/layout/Container"
+import { Kicker } from "@/components/layout/Kicker"
 import { PrefetchLink } from "@/components/PrefetchLink"
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { homeFeatures } from "@/data/home"
-import { Wrapper } from "@/components/utils/Wrapper"
 
 export function FeaturesSection() {
   return (
-    <section className="home-section">
-      <Wrapper className="space-y-10">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center">
-          <span className="section-kicker">Seções principais</span>
-          <h2 className="text-balance font-serif text-3xl font-light tracking-tight sm:text-4xl">
+    <section>
+      <Container className="section-y">
+        <div className="mb-12 flex flex-col gap-6">
+          <Kicker>Seções principais</Kicker>
+          <h2 className="text-display max-w-4xl text-[clamp(2.5rem,5vw,4.25rem)] leading-none">
             Tudo o que você precisa para organizar a leitura e a oração em um só lugar.
           </h2>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {homeFeatures.map((feature) => (
-            <Card key={feature.title} className="flex h-full flex-col rounded-[1.75rem] border-border/70 bg-card/80">
-              <CardHeader className="flex-1 gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl border border-border/70 bg-background text-xl">
-                  {feature.icon}
-                </div>
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
-                <CardDescription className="text-sm leading-7">
+        <ul className="flex flex-col border-b">
+          {homeFeatures.map((feature, index) => (
+            <li key={feature.title}>
+              <PrefetchLink
+                href={feature.href}
+                className="group grid grid-cols-[2.5rem_minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-3 border-t py-7 hover:text-liturgical-ink md:grid-cols-[4rem_minmax(0,1.2fr)_minmax(0,1fr)_auto] md:gap-x-10"
+              >
+                <span className="font-mono text-[13px] text-muted-foreground">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="font-serif text-[clamp(2rem,4.4vw,3.75rem)] leading-none tracking-[-0.02em]">
+                  {feature.title}
+                </span>
+                <span className="col-start-2 row-start-2 text-[15px] leading-relaxed text-muted-foreground md:col-start-3 md:row-start-1">
                   {feature.description}
-                </CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <PrefetchLink
-                  href={feature.href}
-                  className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                </span>
+                <span
+                  aria-hidden
+                  className="col-start-3 row-start-1 text-xl transition-transform group-hover:translate-x-1 md:col-start-4"
                 >
-                  Ver seção
-                </PrefetchLink>
-              </CardFooter>
-            </Card>
+                  →
+                </span>
+                <span className="sr-only">Ver seção</span>
+              </PrefetchLink>
+            </li>
           ))}
-        </div>
-      </Wrapper>
+        </ul>
+      </Container>
     </section>
   )
 }

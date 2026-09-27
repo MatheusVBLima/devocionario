@@ -8,25 +8,27 @@ type ShareButtonsProps = {
 
 export function ShareButtons({ title }: ShareButtonsProps) {
   const shareWhatsApp = () => {
-    if (typeof window === "undefined") return
     window.open(
       `https://wa.me/?text=${encodeURIComponent(`${title} - ${window.location.href}`)}`,
       "_blank",
+      "noopener,noreferrer",
     )
   }
 
   const shareTwitter = () => {
-    if (typeof window === "undefined") return
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(window.location.href)}`,
       "_blank",
+      "noopener,noreferrer",
     )
   }
 
   return (
-    <div className="mt-12 border-t pt-6">
-      <h2 className="text-xl font-semibold">Compartilhar este conteúdo</h2>
-      <div className="mt-4 flex flex-wrap gap-3">
+    <section className="flex flex-col gap-4 border-t pt-8">
+      <h2 className="font-mono text-xs tracking-[0.08em] text-liturgical-ink uppercase">
+        Compartilhar este conteúdo
+      </h2>
+      <div className="flex flex-wrap gap-3">
         <Button variant="outline" onClick={shareWhatsApp}>
           Compartilhar no WhatsApp
         </Button>
@@ -34,6 +36,6 @@ export function ShareButtons({ title }: ShareButtonsProps) {
           Compartilhar no Twitter
         </Button>
       </div>
-    </div>
+    </section>
   )
 }
